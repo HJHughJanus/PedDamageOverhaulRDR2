@@ -4,9 +4,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="keyboard.cpp" />
     <ClCompile Include="PedDamageOverhaul.cpp" />
-    <ClCompile Include="ShowLastDamagedBone.cpp" />
-    <ClCompile Include="Infos.cpp" />
-    <ClCompile Include="PDO_Backup.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="script.h" />
@@ -23,8 +20,6 @@
     <ClInclude Include="inc\main.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="scriptinfo.h" />
-    <ClInclude Include="scriptmenu.h" />
     <ClInclude Include="HelperMethods.h" />
   </ItemGroup>
   <ItemGroup>
