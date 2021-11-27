@@ -43,7 +43,6 @@ ID: PDO039 FIRE / BURNING
 */
 
 #include "script.h"
-//#include "scriptmenu.h"
 #include "keyboard.h"
 #include "HelperMethods.h"
 
@@ -87,7 +86,6 @@ void main()
 	int ini_friendlyfirekey = GetPrivateProfileInt("PedDamageConfiguration_Basic", "FirendlyFireKey", 2, ".\\PedDamageOverhaul.ini");
 	int ini_killwoundedkey = GetPrivateProfileInt("PedDamageConfiguration_Basic", "KillWoundedKey", 8, ".\\PedDamageOverhaul.ini");
 	int ini_longerbleedoutkey = GetPrivateProfileInt("PedDamageConfiguration_Basic", "LongerBleedoutKey", 7, ".\\PedDamageOverhaul.ini");
-	//int ini_handsupkey = GetPrivateProfileInt("PedDamageConfiguration_Basic", "HandsUpKey", 6, ".\\PedDamageOverhaul.ini");
 	int ini_alwayskillwounded = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "AlwaysKillWounded", 0, ".\\PedDamageOverhaul.ini");
 	int ini_alwaysbleedoutlonger = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "AlwaysBleedoutLonger", 0, ".\\PedDamageOverhaul.ini");
 	int ini_enabled = GetPrivateProfileInt("PedDamageConfiguration_Basic", "EnableScriptByDefault", 1, ".\\PedDamageOverhaul.ini");
@@ -201,18 +199,12 @@ void main()
 	int ini_horsefallingdelta = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HorseFallingDelta", 6000, ".\\PedDamageOverhaul.ini");
 	int ini_maxdstime = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "MaximumDyingStateTime", 25000, ".\\PedDamageOverhaul.ini");
 	int ini_disableitemglow = GetPrivateProfileInt("PedDamageConfiguration_Basic", "DisableItemGlow", 0, ".\\PedDamageOverhaul.ini");
-	//int ini_pushwhenanim = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "UseForcePushesWhenAnimUsed", 0, ".\\PedDamageOverhaul.ini");
 	int ini_zvalueheadup = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ZValueForHeadBone2", 1500, ".\\PedDamageOverhaul.ini");
-	//int ini_dsdelay = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DSDelay", 1500, ".\\PedDamageOverhaul.ini");
-	//int ini_maxeuphtime = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DSMaxEuphTime", 10000, ".\\PedDamageOverhaul.ini");
-	//int ini_maxpush = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DSMaxStumbleTime", 6000, ".\\PedDamageOverhaul.ini");
 	int ini_stumbletimemin = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DSEuphoriaStumbleMin", 1000, ".\\PedDamageOverhaul.ini");
 	int ini_stumbletimemax = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DSEuphoriaStumbleMax", 15000, ".\\PedDamageOverhaul.ini");
 	int ini_torsooverwrite = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "TorsoShotBleedingOverwrite", 0, ".\\PedDamageOverhaul.ini");
 	int ini_torsodamagedelay = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "TorsoDamageInterval", 500, ".\\PedDamageOverhaul.ini");
-	//int ini_headvecmaxdelta = (float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HeadVecMaxDelta", 10, ".\\PedDamageOverhaul.ini") / 1000;
 	int ini_headvecmaxdeltab = (float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HeadVecMaxDeltaB", 30, ".\\PedDamageOverhaul.ini") / 1000;
-	//int ini_headvecmaxtime = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HeadVecMaxTime", 2000, ".\\PedDamageOverhaul.ini");
 	int ini_headvecmaxtimeb = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HeadVecMaxTimeB", 2000, ".\\PedDamageOverhaul.ini");
 	int ini_playerhealth = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "PlayerHealth", 500, ".\\PedDamageOverhaul.ini");
 	int ini_nooseaudio = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NooseAudio", 0, ".\\PedDamageOverhaul.ini");
@@ -246,11 +238,12 @@ void main()
 	int ini_handsuptime = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HandsUpTime", 0, ".\\PedDamageOverhaul.ini");
 	int ini_combathandsuphostilenpcs = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HandsUpOnDisarmingOnlyWhenAlone", 0, ".\\PedDamageOverhaul.ini");
 	int ini_handsupdelta = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HandsUpDelta", 2000, ".\\PedDamageOverhaul.ini");
+	
 	int toggleKey = VK_F9;
 	int killwoundedkey = VK_F8;
 	int longerbleedoutkey = VK_F7;
 	int friendlyfirekey = VK_F2;
-	//int handsupkey = VK_F6;
+
 	switch (ini_togglekey)
 	{
 	case 1:
@@ -507,14 +500,6 @@ void main()
 	std::map<Ped, int> pedmapdsdelaytimer;
 	//container for stumbling time
 	std::map<Ped, int> pedmapstumbling;
-	//container for remembering when the ped was in euphoria (ragdoll)
-	//std::map<Ped, int> pedmaplastineuphoria;
-	//container for remembering when the ped snapped out of euphoria (ragdoll)
-	//std::map<Ped, int> pedmaplastouteuphoria;
-	//container for remembering if ragdolling should be triggered
-	//std::map<Ped, int> pedmaptriggereuph;
-	//container for remembering when the dying push was first applied
-	//std::map<Ped, int> pedmapfirstpush;
 	//container for making sure peds don't stand still
 	std::map<Ped, Vector3> pedmapheadvecdelta;
 	std::map<Ped, int> pedmapheadvectime;
@@ -532,8 +517,6 @@ void main()
 	std::map<Ped, int> pedmapfireaudiotime;
 	//container for last sound used (to prevent looping)
 	std::map<Ped, int> pedmapfireaudiosample;
-	//container for time when ped was last on a mount
-	//std::map<Ped, int> pedmaplasttimeinvehicle;
 	//container for bool if ped is bleeding from an artery shot
 	std::map<Ped, bool> pedmaparteryshot;
 	//container for bool if ped has been aimed at when down
@@ -763,11 +746,7 @@ void main()
 	int longerbleedingchance = ini_longerbleedingchance;
 	int bleedingvaluetemp = ini_bleedingvalue;
 	int bleedingchancetemp = ini_bleedingchance_dying2;
-
-	//hands up on aiming settings
-	//bool handsupbool = false;
-	//int msgTimeHandsUp = 0;
-
+	
 	//task id
 	char c[40], d[40], e[40], f[40], g[40], h[40], j[40];
 	std::string text = "NPC Health: ", torso = "Torso hit: ", weapondam = "Damaged by weapon: ", legshit = "Legs hit: ", dyingbool = "DS enabled: ", dshistory = "DS visited (1, 2, 3): ", lastdambone = "Last damaged bone: ";
@@ -1256,11 +1235,6 @@ void main()
 				{
 					pedmapisincombatwithplayer[peds[i]] = false;
 				}
-				//if (pedmaplasttimeinvehicle.find(peds[i]) == pedmaplasttimeinvehicle.end())
-				//{
-					//status: 0 = has been in a vehicle
-					//pedmaplasttimeinvehicle[peds[i]] = 0;
-				//}
 			}
 
 
@@ -1493,26 +1467,17 @@ void main()
 				{
 					if (PED::GET_RELATIONSHIP_BETWEEN_GROUPS(GAMEPLAY::GET_HASH_KEY("PLAYER"), GAMEPLAY::GET_HASH_KEY("REL_GANG_DUTCHS")) == 2)
 					{
-						//PED::CLEAR_RELATIONSHIP_BETWEEN_GROUPS(PED::GET_RELATIONSHIP_BETWEEN_PEDS(playerPed, peds[i]), PED::GET_PED_RELATIONSHIP_GROUP_HASH(playerPed), PED::GET_PED_RELATIONSHIP_GROUP_HASH(peds[i]));
-						//PED::CLEAR_RELATIONSHIP_BETWEEN_GROUPS(PED::GET_RELATIONSHIP_BETWEEN_PEDS(peds[i], playerPed), PED::GET_PED_RELATIONSHIP_GROUP_HASH(peds[i]), PED::GET_PED_RELATIONSHIP_GROUP_HASH(playerPed));
 						PED::SET_RELATIONSHIP_BETWEEN_GROUPS(0, GAMEPLAY::GET_HASH_KEY("PLAYER"), GAMEPLAY::GET_HASH_KEY("REL_GANG_DUTCHS"));
 						PED::SET_RELATIONSHIP_BETWEEN_GROUPS(0, GAMEPLAY::GET_HASH_KEY("REL_GANG_DUTCHS"), GAMEPLAY::GET_HASH_KEY("PLAYER"));
-						//ENTITY::SET_ENTITY_CAN_BE_DAMAGED_BY_RELATIONSHIP_GROUP(peds[i], true, 255);
 					}
 				}
 				else if (!ffchangeexecuted)
 				{
 					if (PED::GET_RELATIONSHIP_BETWEEN_GROUPS(GAMEPLAY::GET_HASH_KEY("PLAYER"), GAMEPLAY::GET_HASH_KEY("REL_GANG_DUTCHS")) != 2)
 					{
-						//PED::CLEAR_RELATIONSHIP_BETWEEN_GROUPS(PED::GET_RELATIONSHIP_BETWEEN_PEDS(playerPed, peds[i]), PED::GET_PED_RELATIONSHIP_GROUP_HASH(playerPed), PED::GET_PED_RELATIONSHIP_GROUP_HASH(peds[i]));
-						//PED::CLEAR_RELATIONSHIP_BETWEEN_GROUPS(PED::GET_RELATIONSHIP_BETWEEN_PEDS(peds[i], playerPed), PED::GET_PED_RELATIONSHIP_GROUP_HASH(peds[i]), PED::GET_PED_RELATIONSHIP_GROUP_HASH(playerPed));
 						PED::SET_RELATIONSHIP_BETWEEN_GROUPS(2, GAMEPLAY::GET_HASH_KEY("PLAYER"), GAMEPLAY::GET_HASH_KEY("REL_GANG_DUTCHS"));
 						PED::SET_RELATIONSHIP_BETWEEN_GROUPS(2, GAMEPLAY::GET_HASH_KEY("REL_GANG_DUTCHS"), GAMEPLAY::GET_HASH_KEY("PLAYER"));
 					}
-					/*PED::CLEAR_RELATIONSHIP_BETWEEN_GROUPS(PED::GET_RELATIONSHIP_BETWEEN_GROUPS(GAMEPLAY::GET_HASH_KEY("PLAYER"), GAMEPLAY::GET_HASH_KEY("REL_GANG_DUTCHS")), GAMEPLAY::GET_HASH_KEY("PLAYER"), GAMEPLAY::GET_HASH_KEY("REL_GANG_DUTCHS"));
-					PED::CLEAR_RELATIONSHIP_BETWEEN_GROUPS(PED::GET_RELATIONSHIP_BETWEEN_GROUPS(GAMEPLAY::GET_HASH_KEY("REL_GANG_DUTCHS"), GAMEPLAY::GET_HASH_KEY("PLAYER")), GAMEPLAY::GET_HASH_KEY("REL_GANG_DUTCHS"), GAMEPLAY::GET_HASH_KEY("PLAYER"));
-					PED::SET_RELATIONSHIP_BETWEEN_GROUPS(0, GAMEPLAY::GET_HASH_KEY("PLAYER"), GAMEPLAY::GET_HASH_KEY("REL_GANG_DUTCHS"));
-					PED::SET_RELATIONSHIP_BETWEEN_GROUPS(0, GAMEPLAY::GET_HASH_KEY("REL_GANG_DUTCHS"), GAMEPLAY::GET_HASH_KEY("PLAYER"));*/
 					ffchangeexecuted = true;
 				}
 
@@ -1961,7 +1926,6 @@ void main()
 								{
 									ENTITY::SET_ENTITY_HEALTH(peds[i], ini_dyingmovementthreshold - 1, 0);
 									npchealth = ini_dyingmovementthreshold - 1;
-									//pedmapdyingstate1entered[peds[i]] = 0;
 									PED::SET_PED_TO_RAGDOLL(peds[i], 2000, 2000, 0, false, false, false);
 								}
 								pedmapdown[peds[i]] = 0;
@@ -2342,7 +2306,6 @@ void main()
 							{
 								PED::SET_PED_TO_RAGDOLL(peds[i], 3000, 3000, 3, false, false, false);
 								PED::SET_PED_RAGDOLL_FORCE_FALL(peds[i]);
-								//if (!AUDIO::IS_ANY_SPEECH_PLAYING(peds[i])) PedFear(peds[i], 4, 0, ini_ds2audiochancemod);
 							}
 
 							//disarming
@@ -2394,7 +2357,6 @@ void main()
 									else PED::SET_PED_RAGDOLL_FORCE_FALL(peds[i]);
 									ENTITY::SET_ENTITY_HEALTH(peds[i], ini_dyingmovementthreshold - 1, 0);
 									npchealth = ini_dyingmovementthreshold - 1;
-									//pedmapdyingstate1entered[peds[i]] = 0;
 									pedmaplegsdown[peds[i]] = GAMEPLAY::GET_GAME_TIMER() + ini_bleedingsave;
 								}
 								else if (pedmapleftleghitcounter[peds[i]] > 0 && pedmaprightleghitcounter[peds[i]] > 0 && pedmaplegsdamageddowntime[peds[i]] == 0) pedmaplegsdamageddowntime[peds[i]] = GAMEPLAY::GET_GAME_TIMER() + ini_damagedlegsdowntime;
@@ -2411,7 +2373,6 @@ void main()
 									else PED::SET_PED_RAGDOLL_FORCE_FALL(peds[i]);
 									ENTITY::SET_ENTITY_HEALTH(peds[i], ini_dyingmovementthreshold - 1, 0);
 									npchealth = ini_dyingmovementthreshold - 1;
-									//pedmapdyingstate1entered[peds[i]] = 0;
 									pedmaplegsdown[peds[i]] = GAMEPLAY::GET_GAME_TIMER() + ini_bleedingsave;
 								}
 							}
@@ -2669,7 +2630,6 @@ void main()
 											{
 												ENTITY::SET_ENTITY_HEALTH(peds[i], ini_dyingmovementthreshold - 1, 0);
 												npchealth = ini_dyingmovementthreshold - 1;
-												//pedmapdyingstate1entered[peds[i]] = 0;
 											}
 											else
 											{
@@ -2699,7 +2659,6 @@ void main()
 											{
 												ENTITY::SET_ENTITY_HEALTH(peds[i], ini_dyingmovementthreshold - 1, 0);
 												npchealth = ini_dyingmovementthreshold - 1;
-												//pedmapdyingstate1entered[peds[i]] = 0;
 											}
 											else
 											{
@@ -2729,7 +2688,6 @@ void main()
 											{
 												ENTITY::SET_ENTITY_HEALTH(peds[i], ini_dyingmovementthreshold - 1, 0);
 												npchealth = ini_dyingmovementthreshold - 1;
-												//pedmapdyingstate1entered[peds[i]] = 0;
 											}
 											else
 											{
@@ -2759,7 +2717,6 @@ void main()
 											{
 												ENTITY::SET_ENTITY_HEALTH(peds[i], ini_dyingmovementthreshold - 1, 0);
 												npchealth = ini_dyingmovementthreshold - 1;
-												//pedmapdyingstate1entered[peds[i]] = 0;
 											}
 											else
 											{
@@ -2789,7 +2746,6 @@ void main()
 											{
 												ENTITY::SET_ENTITY_HEALTH(peds[i], ini_dyingmovementthreshold - 1, 0);
 												npchealth = ini_dyingmovementthreshold - 1;
-												//pedmapdyingstate1entered[peds[i]] = 0;
 											}
 											else
 											{
@@ -2942,7 +2898,6 @@ void main()
 									{
 										ENTITY::SET_ENTITY_HEALTH(peds[i], ini_dyingmovementthreshold - 1, 0);
 										npchealth = ini_dyingmovementthreshold - 1;
-										//pedmapdyingstate1entered[peds[i]] = 0;
 									}
 								}
 
@@ -3357,7 +3312,7 @@ void main()
 										else
 										{
 											//if this is the first time entering this loop, create writhing behavior
-											if (pedmapdyingstate3entered[peds[i]] == 0) //&& pedmapdyingstate1entered[peds[i]] == 0 && pedmapdyingstate2entered[peds[i]] == 0
+											if (pedmapdyingstate3entered[peds[i]] == 0)
 											{
 												pedmapdyingstate3entered[peds[i]] = GAMEPLAY::GET_GAME_TIMER();
 												AI::CLEAR_PED_TASKS(peds[i], false, false);
