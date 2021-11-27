@@ -43,7 +43,7 @@ ID: PDO039 FIRE / BURNING
 */
 
 #include "script.h"
-#include "scriptmenu.h"
+//#include "scriptmenu.h"
 #include "keyboard.h"
 #include "HelperMethods.h"
 
