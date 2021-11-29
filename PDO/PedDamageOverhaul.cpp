@@ -238,6 +238,7 @@ void main()
 	int ini_handsuptime = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HandsUpTime", 0, ".\\PedDamageOverhaul.ini");
 	int ini_combathandsuphostilenpcs = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HandsUpOnDisarmingOnlyWhenAlone", 0, ".\\PedDamageOverhaul.ini");
 	int ini_handsupdelta = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HandsUpDelta", 2000, ".\\PedDamageOverhaul.ini");
+	int ini_dsforcedstumbling = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "StumblingBelowDSThreshold", 1, ".\\PedDamageOverhaul.ini");
 	
 	int toggleKey = VK_F9;
 	int killwoundedkey = VK_F8;
@@ -537,6 +538,9 @@ void main()
 	std::map<Ped, int> pedmaphandsup;
 	//container for the first time a ped was forced into "hands up"
 	std::map<Ped, int> pedmapfirsttimehandsup;
+	//container for the information if a ped is or was armed and has been disarmed
+	std::map<Ped, bool> pedmapisarmed;
+	std::map<Ped, bool> pedmapwasdisarmed;
 
 	
 
@@ -748,7 +752,7 @@ void main()
 	int bleedingchancetemp = ini_bleedingchance_dying2;
 	
 	//task id
-	char c[40], d[40], e[40], f[40], g[40], h[40], j[40];
+	char c[60], d[60], e[60], f[60], g[60], h[60], j[60];
 	std::string text = "NPC Health: ", torso = "Torso hit: ", weapondam = "Damaged by weapon: ", legshit = "Legs hit: ", dyingbool = "DS enabled: ", dshistory = "DS visited (1, 2, 3): ", lastdambone = "Last damaged bone: ";
 	int taskid = 99999;
 	int lastbonedamaged = 0;
@@ -1235,6 +1239,14 @@ void main()
 				{
 					pedmapisincombatwithplayer[peds[i]] = false;
 				}
+				if (pedmapisarmed.find(peds[i]) == pedmapisarmed.end())
+				{
+					pedmapisarmed[peds[i]] = false;
+				}
+				if (pedmapwasdisarmed.find(peds[i]) == pedmapwasdisarmed.end())
+				{
+					pedmapwasdisarmed[peds[i]] = false;
+				}
 			}
 
 
@@ -1344,14 +1356,14 @@ void main()
 					strcpy(g, dyingbool.c_str());
 					strcpy(h, dshistory.c_str());
 					strcpy(j, lastdambone.c_str());
-					DrawText(0.55, 0.10, c);
-					DrawText(0.55, 0.22, d);
-					DrawText(0.55, 0.34, e);
-					DrawText(0.55, 0.46, f);
-					DrawText(0.55, 0.58, g);
-					DrawText(0.55, 0.70, h);
-					DrawText(0.55, 0.90, j);
-
+					DrawText(0.55, 0.05, c);
+					DrawText(0.55, 0.15, j);
+					DrawText(0.55, 0.25, e);
+					DrawText(0.55, 0.35, d);					
+					DrawText(0.55, 0.45, f);
+					DrawText(0.55, 0.55, g);
+					DrawText(0.55, 0.65, h);
+					
 					if (WEAPON::IS_PED_WEAPON_READY_TO_SHOOT(playerPed))
 					{
 						Entity playerTargetTemp = playerTargetyolo;
@@ -1367,14 +1379,15 @@ void main()
 					}
 					if (playerTargetyolo != playerPed)
 					{
+						PED::GET_PED_LAST_DAMAGE_BONE(playerTargetyolo, &lastbonedamagedtemp);
+						if (lastbonedamagedtemp != 0) lastbonedamaged = lastbonedamagedtemp;
+						
 						text = "NPC Health: " + std::to_string(ENTITY::GET_ENTITY_HEALTH(playerTargetyolo));
 						torso = "Torso hit: " + std::to_string(pedmaptorsohit[playerTargetyolo]);
 						weapondam = "Damaged by weapon: " + std::to_string(pedmaphasbeendamagedbyweapon[playerTargetyolo]);
 						legshit = "Legs hit: " + std::to_string(pedmaplegsdown[playerTargetyolo]);
 						dyingbool = "DS enabled: " + std::to_string(pedmapdyingstatebool[playerTargetyolo]);
 						dshistory = "DS visited (1, 2, 3): " + std::to_string(pedmapdyingstate1entered[playerTargetyolo]) + ", " + std::to_string(pedmapdyingstate2entered[playerTargetyolo]) + ", " + std::to_string(pedmapdyingstate3entered[playerTargetyolo]);
-						PED::GET_PED_LAST_DAMAGE_BONE(playerTargetyolo, &lastbonedamagedtemp);
-						if (lastbonedamagedtemp != 0) lastbonedamaged = lastbonedamagedtemp;
 						lastdambone = "Last damaged bone: " + std::to_string(lastbonedamaged);
 						strcpy(c, text.c_str());
 						strcpy(d, torso.c_str());
@@ -1383,13 +1396,13 @@ void main()
 						strcpy(g, dyingbool.c_str());
 						strcpy(h, dshistory.c_str());
 						strcpy(j, lastdambone.c_str());
-						DrawText(0.55, 0.10, c);
-						DrawText(0.55, 0.22, d);
-						DrawText(0.55, 0.34, e);
-						DrawText(0.55, 0.46, f);
-						DrawText(0.55, 0.58, g);
-						DrawText(0.55, 0.70, h);
-						DrawText(0.55, 0.90, j);
+						DrawText(0.55, 0.05, c);
+						DrawText(0.55, 0.15, j);
+						DrawText(0.55, 0.25, e);
+						DrawText(0.55, 0.35, d);
+						DrawText(0.55, 0.45, f);
+						DrawText(0.55, 0.55, g);
+						DrawText(0.55, 0.65, h);
 					}
 				}
 
@@ -1575,9 +1588,17 @@ void main()
 						}
 						else if (!pedmapwasnotaloneincombat[peds[i]] && combatcounter > 1) pedmapwasnotaloneincombat[peds[i]] = true;
 					}
-					
 
-					
+					//check if NPC is armed
+					if (!pedmapisarmed[peds[i]])
+					{
+						if (!WEAPON::xIS_PED_UNARMED(peds[i]))
+						{
+							pedmapisarmed[peds[i]] = true;
+							pedmapwasdisarmed[peds[i]] = false;
+						}
+					}
+										
 					//marking NPC if player is shooting at it
 					if (PED::IS_PED_SHOOTING(playerPed))
 					{
@@ -1593,7 +1614,7 @@ void main()
 					}
 
 					//disarming bool (is NPC disarmed)
-					bool disarmed = false;
+					//bool disarmed = false;
 
 					//check if NPC is submerged in water
 					bool submerged = false;
@@ -2166,45 +2187,53 @@ void main()
 							int randdis = 0 + (std::rand() % (99 - 0 + 1));
 							if (randdis < ini_disarmingchance)
 							{
-								if ((actBone == 11300 || actBone == 16749 || actBone == 16781 || actBone == 54187 || actBone == 22798) && !WEAPON::xIS_PED_UNARMED(peds[i]))
+								if ((actBone == 11300 || actBone == 16749 || actBone == 16781 || actBone == 54187 || actBone == 22798))// && !WEAPON::xIS_PED_UNARMED(peds[i]))
 								{
 									//disarming
-									DisarmPed(peds[i], vecweaponhand);
-									disarmed = true;
-
-									//behavior randomizer
-									int rand = 0 + (std::rand() % (99 - 0 + 1));
-									if (rand < ini_disarmcowerchance)
+									if (!WEAPON::xIS_PED_UNARMED(peds[i]))
 									{
-										AI::TASK_COWER(peds[i], -1, 1, 0);
-										pedmaphealth[peds[i]] = npchealth;
+										DisarmPed(peds[i], vecweaponhand);
+										pedmapwasdisarmed[peds[i]] = true;
 									}
-									else if (rand < ini_disarmcowerchance + ini_disarmhandsupchance)
+
+									if (pedmapisarmed[peds[i]])
 									{
-										if (ini_combathandsuphostilenpcs == 1)
+										//behavior randomizer
+										int rand = 0 + (std::rand() % (99 - 0 + 1));
+										if (rand < ini_disarmcowerchance)
 										{
-											if (!pedmapwasnotaloneincombat[peds[i]])
-											{
-												pedmaphandsup[peds[i]] = GAMEPLAY::GET_GAME_TIMER();
-												pedmaphealth[peds[i]] = npchealth;
-											}
-											else if (pedmapwasnotaloneincombat[peds[i]] && combatcounter <= 2)
-											{
-												pedmaphandsup[peds[i]] = GAMEPLAY::GET_GAME_TIMER();
-												pedmaphealth[peds[i]] = npchealth;
-											}
-										}
-										else
-										{
-											pedmaphandsup[peds[i]] = GAMEPLAY::GET_GAME_TIMER();
+											AI::TASK_COWER(peds[i], -1, 1, 0);
 											pedmaphealth[peds[i]] = npchealth;
 										}
+										else if (rand < ini_disarmcowerchance + ini_disarmhandsupchance)
+										{
+											if (ini_combathandsuphostilenpcs == 1)
+											{
+												if (!pedmapwasnotaloneincombat[peds[i]])
+												{
+													pedmaphandsup[peds[i]] = GAMEPLAY::GET_GAME_TIMER();
+													pedmaphealth[peds[i]] = npchealth;
+												}
+												else if (pedmapwasnotaloneincombat[peds[i]] && combatcounter <= 2)
+												{
+													pedmaphandsup[peds[i]] = GAMEPLAY::GET_GAME_TIMER();
+													pedmaphealth[peds[i]] = npchealth;
+												}
+											}
+											else
+											{
+												pedmaphandsup[peds[i]] = GAMEPLAY::GET_GAME_TIMER();
+												pedmaphealth[peds[i]] = npchealth;
+											}
+										}
+										else if (rand < ini_disarmcowerchance + ini_disarmhandsupchance + ini_disarmfleeingchance)
+										{
+											AI::_0xFD45175A6DFD7CE9(peds[i], playerPed, 4, 0, -1.0f, -1, 0); //fleeing
+										}
+										else pedmaphealth[peds[i]] = npchealth; //remember health for later use
 									}
-									else if (rand < ini_disarmcowerchance + ini_disarmhandsupchance + ini_disarmfleeingchance)
-									{
-										AI::_0xFD45175A6DFD7CE9(peds[i], playerPed, 4, 0, -1.0f, -1, 0); //fleeing
-									}
-									else pedmaphealth[peds[i]] = npchealth; //remember health for later use
+
+									pedmapisarmed[peds[i]] = false;									
 								}
 							}
 
@@ -2434,7 +2463,7 @@ void main()
 						//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
 						//if NPC has lost health since it has been flagged ("remember health for later use"), create according behavior
-						if (ini_disarmingchance > 0)
+						if (ini_disarmingchance > 0 && pedmapwasdisarmed[peds[i]])
 						{
 							if (pedmaphealth[peds[i]] != 0)
 							{
@@ -2822,7 +2851,7 @@ void main()
 
 						//if NPC can be knocked down, compute if he is being knocked down now (randomly when hit)
 						if (npchealth < ini_painthreshold && npchealth > ini_dyingmovementthreshold
-							&& pedmapstat[peds[i]] != 99 && !disarmed && !pedmapnobleeding[peds[i]] && pedmapstat[peds[i]] != 10 && pedmapstat[peds[i]] != 11)
+							&& pedmapstat[peds[i]] != 99 && !pedmapwasdisarmed[peds[i]] && !pedmapnobleeding[peds[i]] && pedmapstat[peds[i]] != 10 && pedmapstat[peds[i]] != 11)
 						{
 							int painrand = 0 + (std::rand() % (999 - 0 + 1));
 							int painaudio = 9;
@@ -2923,6 +2952,18 @@ void main()
 									//			BEGIN: DYING STATE PUSH - PUT NPC DOWN (IF STANDING), ID: PDO031
 									//
 									//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
+									
+									if (ini_dsforcedstumbling == 1)
+									{
+										if (pedmapstat[peds[i]] != 1 && pedmapstat[peds[i]] != 2)
+										{
+											int survivfir = 0 + (std::rand() % (99 - 0 + 1));
+											if (survivfir < ini_survivfirchance) pedmapstat[peds[i]] = 2;
+											else pedmapstat[peds[i]] = 1;
+
+											asdsd
+										}
+									}
 									
 									if (ini_nopushingdown == 0)
 									{
@@ -3721,7 +3762,7 @@ void main()
 							PED::SET_PED_MAX_HEALTH(peds[i], ini_firehealth);
 							ENTITY::SET_ENTITY_HEALTH(peds[i], ini_dyingthreshold - 1, 0);
 							npchealth = ini_dyingthreshold - 1;
-							pedmapdyingstate3entered[peds[i]] = 0;
+							//pedmapdyingstate3entered[peds[i]] = 0;
 						}
 						if (!submerged) AUDIO::STOP_CURRENT_PLAYING_AMBIENT_SPEECH(peds[i], 0);
 						if (PED::IS_PED_RAGDOLL(peds[i])) PED::RESET_PED_RAGDOLL_TIMER(peds[i]);
