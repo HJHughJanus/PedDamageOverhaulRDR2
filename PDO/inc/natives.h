@@ -2295,6 +2295,7 @@ namespace AI
 	static void _0x2E1D6D87346BB7D2(Any p0, Any p1, BOOL p2, BOOL p3) { invoke<Void>(0x2E1D6D87346BB7D2, p0, p1, p2, p3); }
 	static void _0x58428248BF4B64E4(Any p0, float p1, float p2, float p3, Any p4, Any p5, float p6, Any p7, Any p8) { invoke<Void>(0x58428248BF4B64E4, p0, p1, p2, p3, p4, p5, p6, p7, p8); }
 	static void _0xFD45175A6DFD7CE9(Any p0, Any p1, Any p2, Any p3, float p4, Any p5, Any p6) { invoke<Void>(0xFD45175A6DFD7CE9, p0, p1, p2, p3, p4, p5, p6); }
+	static void xTASK_FLEE(Any p0, Any p1, Any p2, Any p3, float p4, Any p5, Any p6) { invoke<Void>(0xFD45175A6DFD7CE9, p0, p1, p2, p3, p4, p5, p6); }
 	static void _0x390E0B697D25EAF5(Any p0, float p1, float p2, float p3, Any p4, float p5, float p6, float p7, Any p8, float p9, Any p10, Any p11) { invoke<Void>(0x390E0B697D25EAF5, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11); }
 	static void _0x5802E0F910E4CF1D(Any p0, Any p1, Any p2, float p3, float p4, float p5, Any p6, float p7, Any p8, Any p9) { invoke<Void>(0x5802E0F910E4CF1D, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9); }
 	static void _0xE8F1A5B4CED3725A(Any p0, float p1, float p2, float p3, float p4) { invoke<Void>(0xE8F1A5B4CED3725A, p0, p1, p2, p3, p4); }
