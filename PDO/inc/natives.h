@@ -2254,6 +2254,7 @@ namespace AI
 	static void TASK_LEAVE_VEHICLE(Ped ped, Vehicle vehicle, int flags, Any p3) { invoke<Void>(0xD3DBCE61A490BE02, ped, vehicle, flags, p3); }
 	static void _0x92DB0739813C5186(Any p0, Any p1, Any p2, Any p3, float p4, Any p5, Any* p6, Any* p7) { invoke<Void>(0x92DB0739813C5186, p0, p1, p2, p3, p4, p5, p6, p7); }
 	static void _0x48E92D3DDE23C23A(Any p0, Any p1, BOOL p2, Any* p3, Any* p4, Any p5) { invoke<Void>(0x48E92D3DDE23C23A, p0, p1, p2, p3, p4, p5); }
+	static void _xTASK_DISMOUNT_ANIMAL(Ped p0, int p1, BOOL p2, Any* p3, Any* p4, Any p5) { invoke<Void>(0x48E92D3DDE23C23A, p0, p1, p2, p3, p4, p5); }
 	static void _0x9030AD4B6207BFE8(Any p0, Any p1, Any p2) { invoke<Void>(0x9030AD4B6207BFE8, p0, p1, p2); }
 	static void _0xE05A5D39BE6E93AF(Any p0) { invoke<Void>(0xE05A5D39BE6E93AF, p0); }
 	static void TASK_VEHICLE_DRIVE_TO_COORD(Ped ped, Vehicle vehicle, float x, float y, float z, float speed, Any p6, Hash vehicleModel, int drivingMode, float stopRange, float p10) { invoke<Void>(0xE2A2AA2F659D77A7, ped, vehicle, x, y, z, speed, p6, vehicleModel, drivingMode, stopRange, p10); }
@@ -5059,6 +5060,7 @@ namespace RADAR
 	static Blip GET_MAIN_PLAYER_BLIP_ID() { return invoke<Blip>(0x5CD2889B2B381D45); }
 	static Any _0x3E593DF9C2962EC6(Any p0) { return invoke<Any>(0x3E593DF9C2962EC6, p0); }
 	static Any _0x554D9D53F696D002(Any p0, Any p1, Any p2, Any p3) { return invoke<Any>(0x554D9D53F696D002, p0, p1, p2, p3); }
+	static Any xBLIP_ADD_FOR_ENTITY(Hash p0, Entity p1) { return invoke<Any>(0x23F74C2FDA6E7C61, p0, p1); }
 	static Any _0x23F74C2FDA6E7C61(Any p0, Any p1) { return invoke<Any>(0x23F74C2FDA6E7C61, p0, p1); }
 	static Any _0xA486008892065FB9(Any p0, Any p1) { return invoke<Any>(0xA486008892065FB9, p0, p1); }
 	static Any _0x45F13B7E0A15C880(Any p0, float p1, float p2, float p3, float p4) { return invoke<Any>(0x45F13B7E0A15C880, p0, p1, p2, p3, p4); }
@@ -5080,6 +5082,7 @@ namespace RADAR
 	static BOOL _0x01B928CA2E198B01(Any p0) { return invoke<BOOL>(0x01B928CA2E198B01, p0); }
 	static void SET_BLIP_NAME_FROM_TEXT_FILE(Blip blip, char* gxtEntry) { invoke<Void>(0x0A062D6D7C0B2C2C, blip, gxtEntry); }
 	static void _0x9CB1A1623062F402(Any p0, Any* p1) { invoke<Void>(0x9CB1A1623062F402, p0, p1); }
+	static void xSET_BLIP_NAME_FROM_PLAYER_STRING(Blip p0, char* p1) { invoke<Void>(0x9CB1A1623062F402, p0, p1); }
 	static void SET_BLIP_NAME_TO_PLAYER_NAME(Blip blip, Player player) { invoke<Void>(0x093DD5A31BC2B459, blip, player); }
 	static void SET_BLIP_ROTATION(Blip blip, int rotation) { invoke<Void>(0x6049966A94FBE706, blip, rotation); }
 	static void SET_BLIP_SCALE(Blip blip, float scale) { invoke<Void>(0xD38744167B2FA257, blip, scale); }

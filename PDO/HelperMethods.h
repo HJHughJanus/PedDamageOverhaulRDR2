@@ -23,11 +23,12 @@ struct ScriptedSpeechParams
 	alignas(8) int v8;
 };
 
-void DisarmPed(Ped ped, Vector3 weaponhandpos)
+bool DisarmPed(Ped ped, Vector3 weaponhandpos)
 {
 	Hash pedweaphash;
-	WEAPON::GET_CURRENT_PED_WEAPON(ped, &pedweaphash, false, 0, false);
+	bool ispedarmed = WEAPON::GET_CURRENT_PED_WEAPON(ped, &pedweaphash, false, 0, false);
 	WEAPON::SET_PED_DROPS_INVENTORY_WEAPON(ped, pedweaphash, weaponhandpos.x, weaponhandpos.y, weaponhandpos.z, 30);
+	return ispedarmed;
 }
 
 bool isPedStoryChar(Ped ped)
@@ -94,11 +95,11 @@ int PedFear(Ped ped, int mode, int lastfearaudio, int ds2chance) //returns last 
 		speech[2] = "GENERIC_SHOCKED_HIGH";
 		speech[3] = "SCARED_HELP";
 		speech[4] = "GENERIC_CURSE_HIGH";
-		speech[5] = "INTIMIDATED_GEN";
-		speech[6] = "GENERIC_FRIGHTENED_HIGH";
-		speech[7] = "GENERIC_AFRAID_REACTION";
-		speech[8] = "SCREAM_SHOCKED";
-		speech[9] = "SCREAM_TERROR";
+		//- speech[5] = "INTIMIDATED_GEN";
+		speech[5] = "GENERIC_FRIGHTENED_HIGH";
+		//-speech[7] = "GENERIC_AFRAID_REACTION";
+		speech[6] = "SCREAM_SHOCKED";
+		speech[7] = "SCREAM_TERROR";
 		//speech[10] = "PLEAD";
 		//speech[6] = "GUN_RUN";
 		//speech[8] = "INTIMIDATED_AGAIN_GEN";
