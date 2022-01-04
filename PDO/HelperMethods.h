@@ -69,8 +69,11 @@ bool isPedStoryChar(Ped ped)
 
 	std::map<int, char*>::iterator pedmodels_it = pedmodels.begin();
 	
-	//Spines of America NPCs
+	//NPCs from "Spines of America" mission
 	if (PED::IS_PED_MODEL(ped, 1045059103) || PED::IS_PED_MODEL(ped, 1765636093) || PED::IS_PED_MODEL(ped, 847448713)) return true;
+
+	//Danbury from "American Fathers II" mission
+	if (PED::IS_PED_MODEL(ped, 3273604429)) return true;
 
 	//NPCs listed above
 	while (pedmodels_it != pedmodels.end())

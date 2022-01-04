@@ -552,7 +552,7 @@ void main()
 	//container for remembering which movement style ped is supposed to have
 	std::map<Ped, char*> pedmapmovement;
 	//container for remembering if ped blip is set
-	std::map<Ped, int> pedmapblipset;
+	std::map<Ped, Blip> pedmapblipset;
 	//container for remembering when ped did a forced dismount (for surrendering)
 	std::map<Ped, int> pedmapdismount;
 	
@@ -766,7 +766,7 @@ void main()
 	
 	//task id
 	char c[60], d[60], e[60], f[60], g[60], h[60], j[60];
-	std::string text = "NPC Health: ", torso = "Torso hit: ", weapondam = "Damaged by weapon: ", legshit = "Legs hit: ", dyingbool = "DS enabled: ", dshistory = "DS visited (1, 2, 3): ", lastdambone = "Last damaged bone: ";
+	std::string text = "NPC Health: ", ttext = "NPC Tasks: ", mtext = "NPC Model: ", torso = "Torso hit: ", weapondam = "Damaged by weapon: ", legshit = "Legs hit: ", dyingbool = "DS enabled: ", dshistory = "DS visited (1, 2, 3): ", lastdambone = "Last damaged bone: ";
 	int taskid = 99999;
 	int lastbonedamaged = 0;
 	int lastbonedamagedtemp = 0;
@@ -1371,6 +1371,15 @@ void main()
 			//iterate through NPCs, check them for stuff and apply stuff (main function of this mod)
 			for (int i = 0; i < count; i++)
 			{
+				//remove blip if it still exists
+				if (ini_blipfords == 1)
+				{
+					if (pedmapblipset[peds[i]] != 0)
+					{
+						if (ENTITY::IS_ENTITY_DEAD(peds[i]) && RADAR::DOES_BLIP_EXIST(pedmapblipset[peds[i]])) RADAR::REMOVE_BLIP(&pedmapblipset[peds[i]]);
+					}
+				}
+				
 				//show ped health
 				if (ini_shownpchealth == 1)
 				{
@@ -1447,13 +1456,13 @@ void main()
 					}
 					if (playerTargetOld != playerPed && playerTargetOld != playerTargetyolo)
 					{
-						text = "NPC Model: ";
-						strcpy(c, text.c_str());
+						mtext = "NPC Model: ";
+						strcpy(c, mtext.c_str());
 					}
 					if (playerTargetyolo != playerPed)
 					{
-						text = "NPC Model: " + std::to_string(ENTITY::GET_ENTITY_MODEL(playerTargetyolo));
-						strcpy(c, text.c_str());
+						mtext = "NPC Model: " + std::to_string(ENTITY::GET_ENTITY_MODEL(playerTargetyolo));
+						strcpy(c, mtext.c_str());
 						DrawText(0.5, 0.15, c);
 					}
 				}
@@ -1461,7 +1470,7 @@ void main()
 				//show task ids
 				if (ini_showpedtasks == 1)
 				{
-					strcpy(c, text.c_str());
+					strcpy(c, ttext.c_str());
 					DrawText(0.5, 0.15, c);
 
 					if (WEAPON::IS_PED_WEAPON_READY_TO_SHOOT(playerPed))
@@ -1474,8 +1483,8 @@ void main()
 					}
 					if (playerTargetOld != playerPed && playerTargetOld != playerTargetyolo)
 					{
-						text = "NPC Tasks: ";
-						strcpy(c, text.c_str());
+						ttext = "NPC Tasks: ";
+						strcpy(c, ttext.c_str());
 					}
 					if (playerTargetyolo != playerPed)
 					{
@@ -1483,11 +1492,11 @@ void main()
 						{
 							if (g != 582 && g != 594 && AI::GET_IS_TASK_ACTIVE(playerTargetyolo, g))
 							{
-								if (text.find("," + std::to_string(g) + ",") == string::npos)
+								if (ttext.find("," + std::to_string(g) + ",") == string::npos)
 								{
-									if (text == "NPC Tasks: ") text += std::to_string(g);
-									else text += "," + std::to_string(g);
-									strcpy(c, text.c_str());
+									if (ttext == "NPC Tasks: ") ttext += std::to_string(g);
+									else ttext += "," + std::to_string(g);
+									strcpy(c, ttext.c_str());
 									DrawText(0.5, 0.15, c);
 								}
 							}
@@ -1961,7 +1970,7 @@ void main()
 							{
 								if (!submerged)
 								{
-									ENTITY::SET_ENTITY_HEALTH(peds[i], 0, 0);
+									//ENTITY::SET_ENTITY_HEALTH(peds[i], 0, 0);
 									npchealth = 0;
 								}
 								pedmapkill[peds[i]] = 0;
@@ -1981,13 +1990,34 @@ void main()
 							{
 								if (pedmaphandsup[peds[i]] != 0)
 								{
-									if (pedmapdismount[peds[i]] == 0 || (pedmapdismount[peds[i]] != 0 && pedmapdismount[peds[i]] < GAMEPLAY::GET_GAME_TIMER()))//!PED::IS_PED_ON_MOUNT(peds[i]) && !PED::IS_PED_IN_ANY_VEHICLE(peds[i], false))
+									if (PED::IS_PED_ON_MOUNT(peds[i]) && pedmapdismount[peds[i]] == 0)
+									{
+										pedmapdismount[peds[i]] = GAMEPLAY::GET_GAME_TIMER() + ini_dismounthandsupdelta;
+										AI::CLEAR_PED_TASKS(peds[i], false, false);
+										AI::CLEAR_PED_SECONDARY_TASK(peds[i]);
+										AI::_xTASK_DISMOUNT_ANIMAL(peds[i], 0, 0, 0, 0, 0);
+									}
+									else if (PED::IS_PED_IN_ANY_VEHICLE(peds[i], false) && pedmapdismount[peds[i]] == 0)
+									{
+										pedmapdismount[peds[i]] = GAMEPLAY::GET_GAME_TIMER() + ini_dismounthandsupdelta;
+										AI::CLEAR_PED_TASKS(peds[i], false, false);
+										AI::CLEAR_PED_SECONDARY_TASK(peds[i]);
+										AI::TASK_LEAVE_ANY_VEHICLE(peds[i], 0, 0);
+									}
+									
+									if (pedmapdismount[peds[i]] != 0)
+									{
+										if (!PED::IS_PED_ON_MOUNT(peds[i]) && !PED::IS_PED_IN_ANY_VEHICLE(peds[i], false)) pedmapdismount[peds[i]] = 0;
+										else if (GAMEPLAY::GET_GAME_TIMER() > pedmapdismount[peds[i]]) pedmapdismount[peds[i]] = 0;
+									}
+									else
 									{
 										if (pedmaphandsup[peds[i]] + ini_handsupdelta < GAMEPLAY::GET_GAME_TIMER() && pedmapfirsttimehandsup[peds[i]] == 0)
 										{
 											pedmapfirsttimehandsup[peds[i]] = GAMEPLAY::GET_GAME_TIMER();
 										}
-										else if (pedmapfirsttimehandsup[peds[i]] + ini_handsuptime > GAMEPLAY::GET_GAME_TIMER())
+										
+										if (pedmapfirsttimehandsup[peds[i]] != 0 && pedmapfirsttimehandsup[peds[i]] + ini_handsuptime > GAMEPLAY::GET_GAME_TIMER())
 										{
 
 											Vector3 vecheadplayer = ENTITY::GET_WORLD_POSITION_OF_ENTITY_BONE(playerPed, PED::GET_PED_BONE_INDEX(peds[i], 21030));
@@ -2008,6 +2038,13 @@ void main()
 											pedmaphandsup[peds[i]] = 0;
 											pedmapfirsttimehandsup[peds[i]] = 0;
 										}
+									}/*
+									else if (pedmapdismount[peds[i]] != 0 && pedmapdismount[peds[i]] > GAMEPLAY::GET_GAME_TIMER())
+									{
+										AI::CLEAR_PED_TASKS(peds[i], false, false);
+										AI::CLEAR_PED_SECONDARY_TASK(peds[i]);
+										AI::_xTASK_DISMOUNT_ANIMAL(peds[i], 0, 0, 0, 0, 0);
+										AI::TASK_LEAVE_ANY_VEHICLE(peds[i], 0, 0);
 									}
 									//special version for mounted npcs
 									/*
@@ -2295,17 +2332,6 @@ void main()
 										}
 										else if (rand < ini_disarmcowerchance + ini_disarmhandsupchance)
 										{										
-											if (PED::IS_PED_ON_MOUNT(peds[i]))
-											{
-												AI::_xTASK_DISMOUNT_ANIMAL(peds[i], 0, 0, 0, 0, 0);
-												if (pedmapdismount[peds[i]] == 0) pedmapdismount[peds[i]] = GAMEPLAY::GET_GAME_TIMER() + ini_dismounthandsupdelta;
-											}
-											if (PED::IS_PED_IN_ANY_VEHICLE(peds[i], false))
-											{
-												AI::TASK_LEAVE_ANY_VEHICLE(peds[i], 0, 0);
-												if (pedmapdismount[peds[i]] == 0) pedmapdismount[peds[i]] = GAMEPLAY::GET_GAME_TIMER() + ini_dismounthandsupdelta;
-											}
-																						
 											if (ini_combathandsuphostilenpcs == 1)
 											{
 												if (!pedmapwasnotaloneincombat[peds[i]])
@@ -2392,7 +2418,7 @@ void main()
 						//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
 						//make injured NPCs walk differently (in an injured style)
-						if (pedmapmovement[peds[i]] == "" || pedmapmovement[peds[i]] == "injured_right_arm" || pedmapmovement[peds[i]] == "injured_left_arm" || pedmapmovement[peds[i]] == "injured_torso")
+						if (pedmapmovement[peds[i]] == "")// || pedmapmovement[peds[i]] == "injured_right_arm" || pedmapmovement[peds[i]] == "injured_left_arm" || pedmapmovement[peds[i]] == "injured_torso")
 						{
 							int randlimp = 0 + (std::rand() % (99 - 0 + 1));
 
@@ -2421,7 +2447,7 @@ void main()
 								else pedmapmovement[peds[i]] = "injured_torso";
 							}
 						}
-						else
+						/*else
 						{
 							PED::xSET_STANCE(peds[i], "DEFAULT");
 							PED::xSET_WALKING_STYLE(peds[i], pedmapmovement[peds[i]]);
@@ -3057,6 +3083,7 @@ void main()
 						//
 						//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
+						/*
 						//making sure NPC doesn't go limp when one-shotted
 						if (npchealth < 2 && pedmapdyingstatebool[peds[i]])
 						{
@@ -3070,7 +3097,7 @@ void main()
 						{
 							ENTITY::SET_ENTITY_HEALTH(peds[i], 5, 0);
 							npchealth = 5;
-						}
+						}*/
 
 						//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 						//
@@ -3199,7 +3226,7 @@ void main()
 									{
 										Blip pedblip = RADAR::xBLIP_ADD_FOR_ENTITY(0x19365607, peds[i]);
 										RADAR::xSET_BLIP_NAME_FROM_PLAYER_STRING(pedblip, "PDO - NPC in Dying States");
-										pedmapblipset[peds[i]] = 1;
+										pedmapblipset[peds[i]] = pedblip;
 									}
 									
 									//disarming
@@ -3216,7 +3243,7 @@ void main()
 									else if (GAMEPLAY::GET_GAME_TIMER() > pedmapko[peds[i]] && !PED::IS_PED_RAGDOLL(peds[i])) PED::SET_PED_TO_RAGDOLL(peds[i], 3500, 3500, 0, false, false, false);
 
 									//preventing NPCs from getting up after being downed
-									if ((pedmapdyingstate1entered[peds[i]] != 0 || pedmapdyingstate2entered[peds[i]] != 0 || pedmapdyingstate3entered[peds[i]] != 0) && !PED::IS_PED_RAGDOLL(peds[i])) PED::SET_PED_TO_RAGDOLL(peds[i], 3500, 3500, 3, false, false, false);
+									if ((pedmapdyingstate1entered[peds[i]] != 0 || pedmapdyingstate2entered[peds[i]] != 0 || pedmapdyingstate3entered[peds[i]] != 0) && !PED::IS_PED_RAGDOLL(peds[i])) PED::SET_PED_TO_RAGDOLL(peds[i], 35000, 35000, 3, false, false, false);
 
 									if (pedisready)// && ENTITY::GET_ENTITY_SPEED(peds[i]) < maxragdollspeed)
 									{
@@ -3224,7 +3251,7 @@ void main()
 										if (!submerged) AUDIO::STOP_CURRENT_PLAYING_AMBIENT_SPEECH(peds[i], 0);
 
 										//keep NPC on the ground
-										PED::RESET_PED_RAGDOLL_TIMER(peds[i]);
+										if (npchealth > ini_dyingthreshold) PED::RESET_PED_RAGDOLL_TIMER(peds[i]);
 
 										//ensure reactiveness of NPC
 										PED::SET_PED_CAN_ARM_IK(peds[i], true);
@@ -3540,7 +3567,7 @@ void main()
 												pedmapdyingstate3entered[peds[i]] = GAMEPLAY::GET_GAME_TIMER();
 												AI::CLEAR_PED_TASKS(peds[i], false, false);
 												AI::CLEAR_PED_SECONDARY_TASK(peds[i]);
-												PED::SET_PED_TO_RAGDOLL(peds[i], 8000, 8000, 0, false, false, false); //ragdoll the NPC
+												PED::SET_PED_TO_RAGDOLL(peds[i], 35000, 35000, 0, false, false, false); //ragdoll the NPC
 											}
 
 											int painrand = 0 + (std::rand() % (999 - 0 + 1));
