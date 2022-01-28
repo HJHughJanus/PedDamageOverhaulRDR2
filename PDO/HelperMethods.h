@@ -10,6 +10,110 @@
 
 using namespace std;
 
+struct PedAttributes
+{
+	//container for peds and their status (is burning, is shot in the leg, is shot in both legs, etc.)
+	int pedmapstat;
+	//container for peds and a flag for doing something (is used during the dying states to be able to stop the NPC from moving (when the value is 0))
+	int pedmapdosomething;
+	//container for peds and time passed since they have been doing something (is used during the dying states to be able to make NPCs move for a certain amount of time)
+	int pedmaptime;
+	//container for peds and their current health (for checking if damage was dealt - mostly used for reactions like "hands up" or cowering (if enough damage is done, NPCs will then flee))
+	int pedmaphealth;
+	//container for peds and a value to decide whether dying states kick in or vanilla behavior is triggered
+	bool pedmapdyingstatebool;
+	//container for peds and a value to calculate the limb specific damage
+	int pedmaplimbhealth;
+	//container for peds and a value for dying movement stage 1 (for remembering if it has been entered before)
+	int pedmapdyingstate1entered;
+	//container for peds and a value for dying movement stage 2 (for remembering if it has been entered before)
+	int pedmapdyingstate2entered;
+	//container for peds and a value for dying movement stage 3 (for remembering if it has been entered before)
+	int pedmapdyingstate3entered;
+	//container for peds and a value for animation transitioning in dying state 1
+	int pedmapanimtrans;
+	//container for ped health (for NPC pain reactions during dying states)
+	int pedmaphealthds;
+	//container for ped stumbling (euphoria enabled or not)
+	int pedmapeuph;
+	//container for ped animation use in dying states
+	int pedmapanimuse;
+	//container for remembering if ped was k.o.ed
+	int pedmapko;
+	//container for flag if ped is falling
+	int pedmapisfalling;
+	//container for remembering how long ped has been falling
+	int pedmapfalltime;
+	//container for flag if ped is to be killed
+	int pedmapkill;
+	//container for flag if ped is to be downed
+	int pedmapdown;
+	//container for flag if ped was hit in the torso
+	int pedmaptorsohit;
+	//container for the ped's accuracy
+	int pedmapaccuracy;
+	//container for flag if ped is down
+	int pedmapisdown;
+	//container for flag if ped is dead
+	int pedmapisdead;
+	//container for flag if ped is has reacted to other peds dying in combat
+	int pedmaphasreacted;
+	//container for bool if ped should bleed
+	bool pedmapnobleeding;
+	//container for time when ped was last on a mount
+	int pedmaplasttimeonmount;
+	//container for delaying the dying state effects, so euphoria motions can be fully executed
+	int pedmapdsdelaytimer;
+	//container for stumbling time
+	int pedmapstumbling;
+	//container for making sure peds don't stand still
+	Vector3 pedmapheadvecdelta;
+	int pedmapheadvectime;
+	//container for last fear audio (to prevent repeating audio)
+	int pedmaplastfearaudio;
+	//container for how many times the right leg of an NPC was hit
+	int pedmaprightleghitcounter;
+	//container for how many times the left leg of an NPC was hit
+	int pedmapleftleghitcounter;
+	//container for damaged legs triggering falling down into dying states
+	int pedmaplegsdamageddowntime;
+	//container for timer of peds being saved from bleeing out (to not die from leg shots)
+	int pedmaplegsdown;
+	//container for timer (fire audio interval)
+	int pedmapfireaudiotime;
+	//container for last sound used (to prevent looping)
+	int pedmapfireaudiosample;
+	//container for bool if ped is bleeding from an artery shot
+	bool pedmaparteryshot;
+	//container for bool if ped has been aimed at when down
+	bool pedmapwasaimedat;
+	//container for bool if ped has been aimed at when down
+	bool pedmaphasbeendamagedbyweapon;
+	//container for bool if ped is hanging (TieYourLasso mod)
+	bool pedmapishanging;
+	//container for hanging time (TieYourLasso mod)
+	int pedmaphangingtime;
+	//container for the last time the ped was shot by the player
+	int pedmapshotbyplayer;
+	//container for bool if ped was fighting against the player alone
+	bool pedmapwasnotaloneincombat;
+	//container for bool if ped is in combat with player
+	bool pedmapisincombatwithplayer;
+	//container for when ped should be in hands-up task
+	int pedmaphandsup;
+	//container for the first time a ped was forced into "hands up"
+	int pedmapfirsttimehandsup;
+	//container for the information if a ped is or was armed and has been disarmed
+	bool pedmapisarmed;
+	bool pedmapwasdisarmed;
+	//container for remembering which movement style ped is supposed to have
+	char* pedmapmovement;
+	//container for remembering if ped blip is set
+	Blip pedmapblipset;
+	//container for remembering when ped did a forced dismount (for surrendering)
+	int pedmapdismount;
+};
+
 struct ScriptedSpeechParams
 {
 	const char* speechName;
