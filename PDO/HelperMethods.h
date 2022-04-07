@@ -12,6 +12,8 @@ using namespace std;
 
 struct PedAttributes
 {
+	//container for flag if ped is a story character (0 is default, 1 is friendly story char (like a gang member), 2 is other story char (like the gunslingers), 3 is not any story char
+	int pedmapisstorychar;
 	//container for peds and their status (is burning, is shot in the leg, is shot in both legs, etc.)
 	int pedmapstat;
 	//container for peds and a flag for doing something (is used during the dying states to be able to stop the NPC from moving (when the value is 0))
@@ -112,13 +114,14 @@ struct PedAttributes
 	Blip pedmapblipset;
 	//container for remembering when ped did a forced dismount (for surrendering)
 	int pedmapdismount;
+	//container for remembering if ped should be immune to disarms (only used for duels, so ingame disarms occur naturally)
+	bool pedmapdisarmingstop;
 };
 
 struct ScriptedSpeechParams
 {
 	const char* speechName;
 	const Any* voiceName;
-	//const char* voiceName;
 	alignas(8) int v3;
 	alignas(8) Hash speechParamHash;
 	alignas(8) Entity entity;
@@ -135,7 +138,8 @@ bool DisarmPed(Ped ped, Vector3 weaponhandpos)
 	return ispedarmed;
 }
 
-bool isPedStoryChar(Ped ped)
+//returns 3 if its neither a story- nor a friendly-NPC, returns 1 if its a friendly-NPC, returns 2 if its a story-NPC
+int isPedStoryChar(Ped ped)
 {
 	//container for ped model names
 	std::map<int, char*> pedmodels;
@@ -160,34 +164,33 @@ bool isPedStoryChar(Ped ped)
 	pedmodels[19] = "CS_mrpearson";
 	pedmodels[20] = "CS_JAMIE";
 	pedmodels[21] = "CS_Jules";
-	pedmodels[22] = "CS_bronte";
-	pedmodels[23] = "CS_revswanson";
-	pedmodels[24] = "CS_MARSHALL_THURWELL";
-	pedmodels[25] = "CS_LARAMIE";
-	pedmodels[26] = "CS_ArchieDown";
-	pedmodels[27] = "CS_thomasdown";
-	pedmodels[28] = "CS_EdithDown";
-	pedmodels[29] = "U_M_M_BHT_BENEDICTALLBRIGHT";
-	pedmodels[30] = "CS_creolecaptain";
-	pedmodels[31] = "CS_josiahtrelawny";
+	pedmodels[22] = "CS_revswanson";
+	pedmodels[23] = "CS_MARSHALL_THURWELL";
+	pedmodels[24] = "CS_LARAMIE";
+	pedmodels[25] = "CS_ArchieDown";
+	pedmodels[26] = "CS_thomasdown";
+	pedmodels[27] = "CS_EdithDown";
+	pedmodels[28] = "CS_creolecaptain";
+	pedmodels[29] = "CS_josiahtrelawny";
 
 	std::map<int, char*>::iterator pedmodels_it = pedmodels.begin();
 	
-	//NPCs from "Spines of America" mission
-	if (PED::IS_PED_MODEL(ped, 1045059103) || PED::IS_PED_MODEL(ped, 1765636093) || PED::IS_PED_MODEL(ped, 847448713)) return true;
-
-	//Danbury from "American Fathers II" mission
-	if (PED::IS_PED_MODEL(ped, 3273604429)) return true;
-
 	//NPCs listed above
 	while (pedmodels_it != pedmodels.end())
 	{
 		char* pedmodel = pedmodels_it->second;
-		if (PED::IS_PED_MODEL(ped, GAMEPLAY::GET_HASH_KEY(pedmodel))) return true;
+		if (PED::IS_PED_MODEL(ped, GAMEPLAY::GET_HASH_KEY(pedmodel))) return 1;
 		pedmodels_it++;
 	}
+	
+	if (PED::IS_PED_MODEL(ped, 1045059103) || PED::IS_PED_MODEL(ped, 1765636093) || PED::IS_PED_MODEL(ped, 847448713) //NPCs from "Spines of America" mission
+		|| PED::IS_PED_MODEL(ped, 3273604429) //Danbury from "American Fathers II" mission
+		|| PED::IS_PED_MODEL(ped, 4196879928) || PED::IS_PED_MODEL(ped, 3736835937) || PED::IS_PED_MODEL(ped, 1347320453) //Gunslingers (Emmet Granger, Billy Midnight, Flaco Hernandez)
+		|| PED::IS_PED_MODEL(ped, 2410820464) //Sheriff Malloy
+		|| PED::IS_PED_MODEL(ped, GAMEPLAY::GET_HASH_KEY("CS_bronte")) || PED::IS_PED_MODEL(ped, GAMEPLAY::GET_HASH_KEY("U_M_M_BHT_BENEDICTALLBRIGHT")))
+		return 2;
 
-	return false;
+	return 3;
 }
 
 int PedFear(Ped ped, int mode, int lastfearaudio, int ds2chance) //returns last used speech line (key)

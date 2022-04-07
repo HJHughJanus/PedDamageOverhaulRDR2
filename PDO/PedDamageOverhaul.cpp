@@ -75,13 +75,13 @@ void main()
 	int ini_shownpchealth = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ShowNPCHealth", 0, ".\\PedDamageOverhaul.ini");
 	int ini_showpedmodel = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ShowNPCModel", 0, ".\\PedDamageOverhaul.ini");
 	int ini_showpedtasks = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ShowNPCTasks", 0, ".\\PedDamageOverhaul.ini");
-	float ini_sweaponmodifier = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "SpecialWeaponModifier", 190, ".\\PedDamageOverhaul.ini")) / 100;
-	float ini_weaponmodifier = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "WeaponModifier", 60, ".\\PedDamageOverhaul.ini")) / 100;
-	float ini_knifemodifier = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "KnifeModifier", 100, ".\\PedDamageOverhaul.ini")) / 100;
-	float ini_meleemodifier = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "MeleeModifier", 150, ".\\PedDamageOverhaul.ini")) / 100;
-	float ini_npcweaponmodifier = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCWeaponModifier", 100, ".\\PedDamageOverhaul.ini")) / 100;
-	float ini_npcmeleemodifier = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCMeleeModifier", 100, ".\\PedDamageOverhaul.ini")) / 100;
-	int ini_storypedhealth = GetPrivateProfileInt("PedDamageConfiguration_Basic", "StoryNPCHealth", 0, ".\\PedDamageOverhaul.ini");
+	float ini_sweaponmodifier = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "SpecialWeaponModifier", 30, ".\\PedDamageOverhaul.ini")) / 100;
+	float ini_weaponmodifier = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "WeaponModifier", 30, ".\\PedDamageOverhaul.ini")) / 100;
+	float ini_knifemodifier = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "KnifeModifier", 90, ".\\PedDamageOverhaul.ini")) / 100;
+	float ini_meleemodifier = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "MeleeModifier", 95, ".\\PedDamageOverhaul.ini")) / 100;
+	float ini_npcweaponmodifier = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCWeaponModifier", 230, ".\\PedDamageOverhaul.ini")) / 100;
+	float ini_npcmeleemodifier = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCMeleeModifier", 105, ".\\PedDamageOverhaul.ini")) / 100;
+	int ini_storypedhealth = GetPrivateProfileInt("PedDamageConfiguration_Basic", "StoryNPCHealth", 450, ".\\PedDamageOverhaul.ini");
 	int ini_togglekey = GetPrivateProfileInt("PedDamageConfiguration_Basic", "ToggleKey", 9, ".\\PedDamageOverhaul.ini");
 	int ini_friendlyfirekey = GetPrivateProfileInt("PedDamageConfiguration_Basic", "FirendlyFireKey", 2, ".\\PedDamageOverhaul.ini");
 	int ini_killwoundedkey = GetPrivateProfileInt("PedDamageConfiguration_Basic", "KillWoundedKey", 8, ".\\PedDamageOverhaul.ini");
@@ -91,27 +91,27 @@ void main()
 	int ini_enabled = GetPrivateProfileInt("PedDamageConfiguration_Basic", "EnableScriptByDefault", 1, ".\\PedDamageOverhaul.ini");
 	int ini_playerinvincibility = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "PlayerInvincibility", 0, ".\\PedDamageOverhaul.ini");
 	int ini_survivfirchance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "FireSurvivalChance", 23, ".\\PedDamageOverhaul.ini");
-	int ini_firehealth = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "FireHealth", 300, ".\\PedDamageOverhaul.ini");
+	int ini_firehealth = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "FireHealth", 320, ".\\PedDamageOverhaul.ini");
 	int ini_pedhealth = GetPrivateProfileInt("PedDamageConfiguration_Basic", "NPCHealth", 75, ".\\PedDamageOverhaul.ini");
 	int ini_pedhealthvehicle = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCHealthInVehicles", 70, ".\\PedDamageOverhaul.ini");
 	float ini_pedhealthvehiclemodtods = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCHealthVehicleToDyingState", 75, ".\\PedDamageOverhaul.ini")) / 100;
 	float ini_pedhealthvehiclemodtofull = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCHealthVehicleToFull", 90, ".\\PedDamageOverhaul.ini")) / 100;
-	int ini_painthreshold = GetPrivateProfileInt("PedDamageConfiguration_Basic", "KnockbackThreshold", 230, ".\\PedDamageOverhaul.ini");
-	int ini_knockbackchance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "KnockbackChance", 11, ".\\PedDamageOverhaul.ini");
-	int ini_dyingthreshold = GetPrivateProfileInt("PedDamageConfiguration_Basic", "DyingThreshold", 60, ".\\PedDamageOverhaul.ini");
-	int ini_dyingmovementthreshold = GetPrivateProfileInt("PedDamageConfiguration_Basic", "DyingMovementThreshold", 215, ".\\PedDamageOverhaul.ini");
-	int ini_dyingmovementthreshold2 = GetPrivateProfileInt("PedDamageConfiguration_Basic", "DyingMovementThreshold2", 130, ".\\PedDamageOverhaul.ini");
-	int ini_stumblechancebothlegs = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "StumbleChanceBothLegs", 100, ".\\PedDamageOverhaul.ini");
-	int ini_stumblechanceoneleg = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "StumbleChanceOneLeg", 15, ".\\PedDamageOverhaul.ini");
+	int ini_painthreshold = GetPrivateProfileInt("PedDamageConfiguration_Basic", "KnockbackThreshold", 70, ".\\PedDamageOverhaul.ini");
+	int ini_knockbackchance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "KnockbackChance", 2, ".\\PedDamageOverhaul.ini");
+	int ini_dyingthreshold = GetPrivateProfileInt("PedDamageConfiguration_Basic", "DyingThreshold", 20, ".\\PedDamageOverhaul.ini");
+	int ini_dyingmovementthreshold = GetPrivateProfileInt("PedDamageConfiguration_Basic", "DyingMovementThreshold", 50, ".\\PedDamageOverhaul.ini");
+	int ini_dyingmovementthreshold2 = GetPrivateProfileInt("PedDamageConfiguration_Basic", "DyingMovementThreshold2", 30, ".\\PedDamageOverhaul.ini");
+	int ini_stumblechancebothlegs = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "StumbleChanceBothLegs", 50, ".\\PedDamageOverhaul.ini");
+	int ini_stumblechanceoneleg = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "StumbleChanceOneLeg", 10, ".\\PedDamageOverhaul.ini");
 	int ini_dsstumblechancebothlegs = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DSStumbleChanceBothLegs", 100, ".\\PedDamageOverhaul.ini");
-	int ini_dsstumblechanceoneleg = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DSStumbleChanceOneLeg", 15, ".\\PedDamageOverhaul.ini");
+	int ini_dsstumblechanceoneleg = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DSStumbleChanceOneLeg", 20, ".\\PedDamageOverhaul.ini");
 	int ini_bleedwhendying = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedWhenDying", 1, ".\\PedDamageOverhaul.ini");
 	int ini_bleedwhenshot = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedWhenShot", 0, ".\\PedDamageOverhaul.ini");
 	int ini_bleedingvalue = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingValue", 2, ".\\PedDamageOverhaul.ini");
-	int ini_runningthresholdbothlegs = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "RunningThresholdBothLegs", 30, ".\\PedDamageOverhaul.ini");
-	int ini_runningthresholdoneleg = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "RunningThresholdOneLeg", 50, ".\\PedDamageOverhaul.ini");
-	int ini_dsrunningthresholdbothlegs = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DSRunningThresholdBothLegs", 30, ".\\PedDamageOverhaul.ini");
-	int ini_dsrunningthresholdoneleg = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DSRunningThresholdOneLeg", 50, ".\\PedDamageOverhaul.ini");
+	int ini_runningthresholdbothlegs = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "RunningThresholdBothLegs", 3, ".\\PedDamageOverhaul.ini");
+	int ini_runningthresholdoneleg = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "RunningThresholdOneLeg", 3, ".\\PedDamageOverhaul.ini");
+	int ini_dsrunningthresholdbothlegs = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DSRunningThresholdBothLegs", 3, ".\\PedDamageOverhaul.ini");
+	int ini_dsrunningthresholdoneleg = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DSRunningThresholdOneLeg", 3, ".\\PedDamageOverhaul.ini");
 	float ini_femalepushmodifier = (float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "FemalePushModifier", 3, ".\\PedDamageOverhaul.ini");
 	float ini_forcepushx = (float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "OneLegStumbleForcePushX", 0, ".\\PedDamageOverhaul.ini");
 	float ini_forcepushy = (float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "OneLegStumbleForcePushY", 320, ".\\PedDamageOverhaul.ini");
@@ -119,19 +119,19 @@ void main()
 	float ini_forcepushxboth = (float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BothLegsStumbleForcePushX", 0, ".\\PedDamageOverhaul.ini");
 	float ini_forcepushyboth = (float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BothLegsStumbleForcePushY", 375, ".\\PedDamageOverhaul.ini");
 	float ini_forcepushzboth = (float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BothLegsStumbleForcePushZ", 0, ".\\PedDamageOverhaul.ini");
-	float ini_dforcepushx = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingForcePushX", 35, ".\\PedDamageOverhaul.ini")) / 10;
-	float ini_dforcepushy = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingForcePushY", 0, ".\\PedDamageOverhaul.ini")) / 10;
-	float ini_dforcepushz = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingForcePushZ", 0, ".\\PedDamageOverhaul.ini")) / 10;
+	float ini_dforcepushx = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingForcePushX", 145, ".\\PedDamageOverhaul.ini")) / 10;
+	float ini_dforcepushy = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingForcePushY", 5, ".\\PedDamageOverhaul.ini")) / 10;
+	float ini_dforcepushz = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingForcePushZ", 5, ".\\PedDamageOverhaul.ini")) / 10;
 	float ini_dyingmovementenablespeed = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingMovementEnableWhenSpeedLowerThan", 10, ".\\PedDamageOverhaul.ini")) / 10;
-	float ini_zvaluehead = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ZValueForHeadBone", 500, ".\\PedDamageOverhaul.ini")) / 1000;
-	float ini_zvaluehip = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ZValueForHipBone", 250, ".\\PedDamageOverhaul.ini")) / 1000;
+	float ini_zvaluehead = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ZValueForHeadBone", 260, ".\\PedDamageOverhaul.ini")) / 1000;
+	float ini_zvaluehip = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ZValueForHipBone", 500, ".\\PedDamageOverhaul.ini")) / 1000;
 	int ini_ignoreupvec = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "IgnoreUpVector", 1, ".\\PedDamageOverhaul.ini");
 	int ini_dforceisrelative = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "IsDyingForceRelative", 0, ".\\PedDamageOverhaul.ini");
 	int ini_ddirectionisrelative = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "IsDyingDirectionRelative", 1, ".\\PedDamageOverhaul.ini");
-	int ini_dyingpushchance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingPushChance", 1000, ".\\PedDamageOverhaul.ini");
-	int ini_bleedingchance_shot = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingChanceShot", 8, ".\\PedDamageOverhaul.ini");
-	int ini_bleedingchance_dying1 = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingChanceDying1", 4, ".\\PedDamageOverhaul.ini");
-	int ini_bleedingchance_dying2 = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingChanceDying2", 8, ".\\PedDamageOverhaul.ini");
+	int ini_dyingpushchance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingPushChance", 600, ".\\PedDamageOverhaul.ini");
+	int ini_bleedingchance_shot = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingChanceShot", 21, ".\\PedDamageOverhaul.ini");
+	int ini_bleedingchance_dying1 = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingChanceDying1", 12, ".\\PedDamageOverhaul.ini");
+	int ini_bleedingchance_dying2 = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingChanceDying2", 6, ".\\PedDamageOverhaul.ini");
 	int ini_longerbleedingchance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "LongerBleedingChance", 3, ".\\PedDamageOverhaul.ini");
 	int ini_longerbleedingvalue = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "LongerBleedingValue", 4, ".\\PedDamageOverhaul.ini");
 	int ini_dirreloneleg = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "IsDirectionRelativeOneLeg", 1, ".\\PedDamageOverhaul.ini");
@@ -140,113 +140,112 @@ void main()
 	int ini_forrelbothlegs = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "IsForceRelativeBothLegs", 0, ".\\PedDamageOverhaul.ini");
 	int ini_lassodisarm = GetPrivateProfileInt("PedDamageConfiguration_Basic", "LassoDisarms", 0, ".\\PedDamageOverhaul.ini");
 	int ini_hogtiedisarm = GetPrivateProfileInt("PedDamageConfiguration_Basic", "HogtyingDisarms", 1, ".\\PedDamageOverhaul.ini");
-	int ini_disarmingchance = GetPrivateProfileInt("PedDamageConfiguration_Basic", "DisarmingChance", 1, ".\\PedDamageOverhaul.ini");
-	int ini_xrollchance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingMovementXRollChance", 40, ".\\PedDamageOverhaul.ini");
-	int ini_dmaudiochance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingMovementAudioChance", 100, ".\\PedDamageOverhaul.ini");
+	int ini_disarmingchance = GetPrivateProfileInt("PedDamageConfiguration_Basic", "DisarmingChance", 100, ".\\PedDamageOverhaul.ini");
+	int ini_dmaudiochance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingMovementAudioChance", 80, ".\\PedDamageOverhaul.ini");
 	int ini_painaudio01 = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingMovementAudio01", 4, ".\\PedDamageOverhaul.ini");
 	int ini_painaudio02 = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingMovementAudio02", 5, ".\\PedDamageOverhaul.ini");
 	int ini_painaudio03 = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingMovementAudio03", 9, ".\\PedDamageOverhaul.ini");
-	int ini_coredepletionamounthealth = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "CoreDepletionAmountHealth", 5, ".\\PedDamageOverhaul.ini");
-	int ini_coredepletionamountstamina = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "CoreDepletionAmountStamina", 5, ".\\PedDamageOverhaul.ini");
-	int ini_coredepletionamountdeadeye = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "CoreDepletionAmountDeadeye", 5, ".\\PedDamageOverhaul.ini");
-	int ini_coredepletiontime = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "CoreDepletionTime", 300000, ".\\PedDamageOverhaul.ini");
+	int ini_coredepletionamounthealth = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "CoreDepletionAmountHealth", 6, ".\\PedDamageOverhaul.ini");
+	int ini_coredepletionamountstamina = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "CoreDepletionAmountStamina", 6, ".\\PedDamageOverhaul.ini");
+	int ini_coredepletionamountdeadeye = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "CoreDepletionAmountDeadeye", 6, ".\\PedDamageOverhaul.ini");
+	int ini_coredepletiontime = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "CoreDepletionTime", 360000, ".\\PedDamageOverhaul.ini");
 	int ini_coredepletion = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "CoreDepletion", 0, ".\\PedDamageOverhaul.ini");
 	int ini_coredepletionafterdeath = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "CoreDepletionAfterDeath", 0, ".\\PedDamageOverhaul.ini");
 	int ini_horsecoredepletionamounthealth = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HorseCoreDepletionAmountHealth", 5, ".\\PedDamageOverhaul.ini");
 	int ini_horsecoredepletionamountstamina = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HorseCoreDepletionAmountStamina", 5, ".\\PedDamageOverhaul.ini");
-	int ini_horsecoredepletiontime = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HorseCoreDepletionTime", 300000, ".\\PedDamageOverhaul.ini");
+	int ini_horsecoredepletiontime = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HorseCoreDepletionTime", 360000, ".\\PedDamageOverhaul.ini");
 	int ini_horsecoredepletion = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HorseCoreDepletion", 0, ".\\PedDamageOverhaul.ini");
 	int ini_dyingstatesmelee = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingStatesForMelee", 0, ".\\PedDamageOverhaul.ini");
 	int ini_pedaccuracyhealthymin = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCAccuracyHealthyMin", 45, ".\\PedDamageOverhaul.ini");
-	int ini_pedaccuracyinjuredmin = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCAccuracyInjuredMin", 10, ".\\PedDamageOverhaul.ini");
+	int ini_pedaccuracyinjuredmin = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCAccuracyInjuredMin", 15, ".\\PedDamageOverhaul.ini");
 	int ini_pedaccuracyhealthymax = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCAccuracyHealthyMax", 65, ".\\PedDamageOverhaul.ini");
-	int ini_pedaccuracyinjuredmax = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCAccuracyInjuredMax", 20, ".\\PedDamageOverhaul.ini");
-	int ini_pedaccuracythreshold = GetPrivateProfileInt("PedDamageConfiguration_Basic", "NPCAccuracyThreshold", 0, ".\\PedDamageOverhaul.ini");
+	int ini_pedaccuracyinjuredmax = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCAccuracyInjuredMax", 35, ".\\PedDamageOverhaul.ini");
+	int ini_pedaccuracythreshold = GetPrivateProfileInt("PedDamageConfiguration_Basic", "NPCAccuracyThreshold", 70, ".\\PedDamageOverhaul.ini");
 	int ini_dyingstatechance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingStateChance", 100, ".\\PedDamageOverhaul.ini");
 	int ini_panicchance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "PanicChance", 2, ".\\PedDamageOverhaul.ini");
-	int ini_panicchancerag = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "PanicChanceHelpless", 3, ".\\PedDamageOverhaul.ini");
-	int ini_excludestorynpcs = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ExcludeStoryNPCs", 1, ".\\PedDamageOverhaul.ini");
-	float ini_legdamagemod =  1 - ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "LegDamageModifier", 100, ".\\PedDamageOverhaul.ini")) / 100;
-	float ini_armdamagemod = 1 - ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ArmDamageModifier", 100, ".\\PedDamageOverhaul.ini")) / 100;
-	float ini_torsodamagemod = 1 - ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "TorsoDamageModifier", 100, ".\\PedDamageOverhaul.ini")) / 100;
-	float ini_headdamagemod = 1 - ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HeadDamageModifier", 100, ".\\PedDamageOverhaul.ini")) / 100;
-	float ini_neckdamagemod = 1 - ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NeckDamageModifier", 100, ".\\PedDamageOverhaul.ini")) / 100;
+	int ini_panicchancerag = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "PanicChanceHelpless", 5, ".\\PedDamageOverhaul.ini");
+	int ini_excludefriendlystorynpcs = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ExcludeFriendlyStoryNPCs", 1, ".\\PedDamageOverhaul.ini");
+	int ini_excludeotherstorynpcs = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ExcludeOtherStoryNPCs", 1, ".\\PedDamageOverhaul.ini");
+	float ini_legdamagemod =  1 - ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "LegDamageModifier", 1, ".\\PedDamageOverhaul.ini")) / 100;
+	float ini_armdamagemod = 1 - ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ArmDamageModifier", 1, ".\\PedDamageOverhaul.ini")) / 100;
+	float ini_torsodamagemod = 1 - ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "TorsoDamageModifier", 120, ".\\PedDamageOverhaul.ini")) / 100;
+	float ini_headdamagemod = 1 - ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HeadDamageModifier", 150, ".\\PedDamageOverhaul.ini")) / 100;
+	float ini_neckdamagemod = 1 - ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NeckDamageModifier", 5, ".\\PedDamageOverhaul.ini")) / 100;
 	int ini_meleedyingstateknockout = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "MeleeDyingStateKnockout", 0, ".\\PedDamageOverhaul.ini");
-	int ini_useanimchance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "UseAnimChance", 50, ".\\PedDamageOverhaul.ini");
-	int ini_transdelta = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "TransitioningDelta", 3500, ".\\PedDamageOverhaul.ini");
+	int ini_useanimchance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "UseAnimChance", 100, ".\\PedDamageOverhaul.ini");
+	int ini_transdelta = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "TransitioningDelta", 500, ".\\PedDamageOverhaul.ini");
 	bool ini_specialhogtie = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingStateHogtie", 1, ".\\PedDamageOverhaul.ini");
-	int ini_euphoriastumblechance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DSEuphoriaStumbleChance", 0, ".\\PedDamageOverhaul.ini");
-	int ini_disarmfleeingchance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DisarmFleeingChance", 31, ".\\PedDamageOverhaul.ini");
-	int ini_disarmattackchance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DisarmAttackChance", 55, ".\\PedDamageOverhaul.ini");
-	int ini_disarmhandsupchance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DisarmHandsUpChance", 7, ".\\PedDamageOverhaul.ini");
-	int ini_disarmcowerchance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DisarmCowerChance", 7, ".\\PedDamageOverhaul.ini");
-	int ini_modeffectrange = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ModEffectRange", 1024, ".\\PedDamageOverhaul.ini");
-	int ini_falltimedown = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "FallTimeDown", 1500, ".\\PedDamageOverhaul.ini");
-	int ini_falltimedeath = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "FallTimeDeath", 2000, ".\\PedDamageOverhaul.ini");
+	int ini_euphoriastumblechance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DSEuphoriaStumbleChance", 100, ".\\PedDamageOverhaul.ini");
+	int ini_disarmfleeingchance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DisarmFleeingChance", 0, ".\\PedDamageOverhaul.ini");
+	int ini_disarmattackchance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DisarmAttackChance", 0, ".\\PedDamageOverhaul.ini");
+	int ini_disarmhandsupchance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DisarmHandsUpChance", 100, ".\\PedDamageOverhaul.ini");
+	int ini_disarmcowerchance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DisarmCowerChance", 0, ".\\PedDamageOverhaul.ini");
+	int ini_modeffectrange = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ModEffectRange", 50, ".\\PedDamageOverhaul.ini");
+	int ini_falltimedown = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "FallTimeDown", 100000, ".\\PedDamageOverhaul.ini");
+	int ini_falltimedeath = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "FallTimeDeath", 100000, ".\\PedDamageOverhaul.ini");
 	int ini_onlybleedshottorso = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "OnlyBleedOnTorsoShot", 1, ".\\PedDamageOverhaul.ini");
 	int ini_friendlyfire = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "FriendlyFire", 0, ".\\PedDamageOverhaul.ini");
-	int ini_npcdowntimeintervall = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCsDownIntervall", 10000, ".\\PedDamageOverhaul.ini");
+	int ini_npcdowntimeintervall = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCsDownIntervall", 3500, ".\\PedDamageOverhaul.ini");
 	int ini_npcdownfearthreshold = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCsDownThreshold", 5, ".\\PedDamageOverhaul.ini");
-	float ini_npcdownfearchance = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCFearChance", 250, ".\\PedDamageOverhaul.ini")) / 10;
+	float ini_npcdownfearchance = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCFearChance", 200, ".\\PedDamageOverhaul.ini")) / 10;
 	int ini_cowerchancefear = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "FearCowerChance", 5, ".\\PedDamageOverhaul.ini");
 	int ini_handsupchancefear = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "FearHandsUpChance", 55, ".\\PedDamageOverhaul.ini");
 	int ini_fleechancefear = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "FearFleeingChance", 40, ".\\PedDamageOverhaul.ini");	
 	int ini_fearfleeultimately = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "FearFleeUltimately", 1, ".\\PedDamageOverhaul.ini");
 	float ini_playersneaknoisemult = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "SneakNoiseMultiplier", 0, ".\\PedDamageOverhaul.ini")) / 100;
-	int ini_reactiononaim = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingStateAimReaction", 20, ".\\PedDamageOverhaul.ini");
+	int ini_reactiononaim = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingStateAimReaction", 75, ".\\PedDamageOverhaul.ini");
 	int ini_ds1audio = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DS1Audio", 1, ".\\PedDamageOverhaul.ini");
 	int ini_ds2audio = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DS2Audio", 1, ".\\PedDamageOverhaul.ini");
 	int ini_horsehealth = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HorseHealth", 0, ".\\PedDamageOverhaul.ini");
 	int ini_horsegod = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HorseInvincibility", 0, ".\\PedDamageOverhaul.ini");
 	int ini_hogtiebleedingstop = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HogtieBleedingStop", 1, ".\\PedDamageOverhaul.ini");
-	int ini_arteryshothealth = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ArteryShotHealth", 400, ".\\PedDamageOverhaul.ini");
-	int ini_horsefallingdelta = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HorseFallingDelta", 6000, ".\\PedDamageOverhaul.ini");
-	int ini_maxdstime = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "MaximumDyingStateTime", 25000, ".\\PedDamageOverhaul.ini");
+	int ini_arteryshothealth = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ArteryShotHealth", 70, ".\\PedDamageOverhaul.ini");
+	int ini_horsefallingdelta = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HorseFallingDelta", 8000, ".\\PedDamageOverhaul.ini");
+	int ini_maxdstime = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "MaximumDyingStateTime", 35000, ".\\PedDamageOverhaul.ini");
 	int ini_disableitemglow = GetPrivateProfileInt("PedDamageConfiguration_Basic", "DisableItemGlow", 0, ".\\PedDamageOverhaul.ini");
-	int ini_zvalueheadup = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ZValueForHeadBone2", 1500, ".\\PedDamageOverhaul.ini");
-	int ini_stumbletimemin = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DSEuphoriaStumbleMin", 1000, ".\\PedDamageOverhaul.ini");
-	int ini_stumbletimemax = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DSEuphoriaStumbleMax", 15000, ".\\PedDamageOverhaul.ini");
+	int ini_zvalueheadup = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ZValueForHeadBone2", 3000, ".\\PedDamageOverhaul.ini");
+	int ini_stumbletimemin = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DSEuphoriaStumbleMin", 2, ".\\PedDamageOverhaul.ini");
+	int ini_stumbletimemax = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DSEuphoriaStumbleMax", 3000, ".\\PedDamageOverhaul.ini");
 	int ini_torsooverwrite = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "TorsoShotBleedingOverwrite", 0, ".\\PedDamageOverhaul.ini");
-	int ini_npcbodydamagedelay = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BodyDamageInterval", 500, ".\\PedDamageOverhaul.ini");
-	int ini_headvecmaxdeltab = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HeadVecMaxDeltaB", 30, ".\\PedDamageOverhaul.ini")) / 1000;
-	int ini_headvecmaxtimeb = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HeadVecMaxTimeB", 2000, ".\\PedDamageOverhaul.ini");
-	int ini_playerhealth = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "PlayerHealth", 500, ".\\PedDamageOverhaul.ini");
-	int ini_nooseaudio = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NooseAudio", 0, ".\\PedDamageOverhaul.ini");
-	int ini_nooseaudiochance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NooseAudioChance", 70, ".\\PedDamageOverhaul.ini");
+	int ini_npcbodydamagedelay = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BodyDamageInterval", 800, ".\\PedDamageOverhaul.ini");
+	int ini_headvecmaxdeltab = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HeadVecMaxDeltaB", 20, ".\\PedDamageOverhaul.ini")) / 1000;
+	int ini_headvecmaxtimeb = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HeadVecMaxTimeB", 2500, ".\\PedDamageOverhaul.ini");
+	int ini_playerhealth = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "PlayerHealth", 0, ".\\PedDamageOverhaul.ini");
+	int ini_nooseaudio = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NooseAudio", 1, ".\\PedDamageOverhaul.ini");
+	int ini_nooseaudiochance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NooseAudioChance", 50, ".\\PedDamageOverhaul.ini");
 	int ini_nooselivelonger = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NoosedNPCsLiveLonger", 1, ".\\PedDamageOverhaul.ini");
-	int ini_noosehealthboost = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NooseHealthBoost", 1, ".\\PedDamageOverhaul.ini");
-	int ini_moneylossafterdeath = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "MoneyLossAfterDeath", 0, ".\\PedDamageOverhaul.ini");
-	float ini_moneylosspercentage = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "MoneyLossPercentage", 0, ".\\PedDamageOverhaul.ini")) / 100;
-	int ini_legshitthreshold = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "LegsHitThreshold", 2, ".\\PedDamageOverhaul.ini");
-	int ini_damagedlegsdowntime = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DamagedLegsDownTime", 15000, ".\\PedDamageOverhaul.ini");
-	int ini_spineshotsparalyze = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "SpineShotsParalyze", 0, ".\\PedDamageOverhaul.ini");
-	int ini_paralysisaudiochance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "SpineParalysisAudioChance", 30, ".\\PedDamageOverhaul.ini");
-	int ini_parachance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "SpineParalysisChance", 10, ".\\PedDamageOverhaul.ini");
-	int ini_bleedingsave = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingSave", 100000, ".\\PedDamageOverhaul.ini");
-	int ini_headvecstumble = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HeadVecStumble", 1, ".\\PedDamageOverhaul.ini");
-	int ini_maxragdollspeed = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "RagdollingSpeedThreshold", 1, ".\\PedDamageOverhaul.ini");
-	int ini_maxragdollspeed2 = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DSRagdollingSpeedThreshold", 1, ".\\PedDamageOverhaul.ini");
-	int ini_diversefireaudio = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DiverseFireAudio", 0, ".\\PedDamageOverhaul.ini");
-	int ini_ds2audiochancemod = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DS2AudioChanceModifier", 75, ".\\PedDamageOverhaul.ini");
-	int ini_bleedingtask01 = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingTask01", 0, ".\\PedDamageOverhaul.ini");
-	int ini_bleedingtask02 = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingTask02", 0, ".\\PedDamageOverhaul.ini");
-	int ini_bleedingtask03 = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingTask03", 0, ".\\PedDamageOverhaul.ini");
-	int ini_bleedingtask04 = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingTask04", 0, ".\\PedDamageOverhaul.ini");
-	int ini_bleedingtask05 = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingTask05", 0, ".\\PedDamageOverhaul.ini");
+	int ini_noosehealthboost = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NooseHealthBoost", 4, ".\\PedDamageOverhaul.ini");
 	int ini_noosehealthboostinterval = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NooseHealthBoostInterval", 1500, ".\\PedDamageOverhaul.ini");
 	int ini_tylfeaturesenabled = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "TYLFeaturesEnabled", 1, ".\\PedDamageOverhaul.ini");
 	int ini_mutenoosednpcs = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "MuteNoosedNPCs", 0, ".\\PedDamageOverhaul.ini");
 	float ini_hangingheight = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NooseHangingHeight", 20, ".\\PedDamageOverhaul.ini")) / 100;
 	int ini_noosefaceturn = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NooseFaceTurn", 1, ".\\PedDamageOverhaul.ini");
+	int ini_moneylossafterdeath = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "MoneyLossAfterDeath", 0, ".\\PedDamageOverhaul.ini");
+	float ini_moneylosspercentage = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "MoneyLossPercentage", 25, ".\\PedDamageOverhaul.ini")) / 100;
+	int ini_legshitthreshold = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "LegsHitThreshold", 2, ".\\PedDamageOverhaul.ini");
+	int ini_damagedlegsdowntime = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DamagedLegsDownTime", 1500, ".\\PedDamageOverhaul.ini");
+	int ini_spineshotsparalyze = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "SpineShotsParalyze", 0, ".\\PedDamageOverhaul.ini");
+	int ini_paralysisaudiochance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "SpineParalysisAudioChance", 10, ".\\PedDamageOverhaul.ini");
+	int ini_parachance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "SpineParalysisChance", 15, ".\\PedDamageOverhaul.ini");
+	int ini_bleedingsave = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingSave", 100000, ".\\PedDamageOverhaul.ini");
+	int ini_maxragdollspeed = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "RagdollingSpeedThreshold", 7, ".\\PedDamageOverhaul.ini");
+	int ini_maxragdollspeed2 = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DSRagdollingSpeedThreshold", 15, ".\\PedDamageOverhaul.ini");
+	int ini_diversefireaudio = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DiverseFireAudio", 1, ".\\PedDamageOverhaul.ini");
+	int ini_ds2audiochancemod = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DS2AudioChanceModifier", 60, ".\\PedDamageOverhaul.ini");
+	int ini_bleedingtask01 = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingTask01", 0, ".\\PedDamageOverhaul.ini");
+	int ini_bleedingtask02 = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingTask02", 0, ".\\PedDamageOverhaul.ini");
+	int ini_bleedingtask03 = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingTask03", 0, ".\\PedDamageOverhaul.ini");
+	int ini_bleedingtask04 = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingTask04", 0, ".\\PedDamageOverhaul.ini");
+	int ini_bleedingtask05 = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingTask05", 0, ".\\PedDamageOverhaul.ini");
 	int ini_nopushingdown = GetPrivateProfileInt("PedDamageConfiguration_Basic", "EuphoriaModInstalled", 0, ".\\PedDamageOverhaul.ini");
-	int ini_handsuptime = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HandsUpTime", 8000, ".\\PedDamageOverhaul.ini");
-	int ini_combathandsuphostilenpcs = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HandsUpOnDisarmingOnlyWhenAlone", 0, ".\\PedDamageOverhaul.ini");
+	int ini_handsuptime = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HandsUpTime", 400000, ".\\PedDamageOverhaul.ini");
+	int ini_combathandsuphostilenpcs = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HandsUpOnDisarmingOnlyWhenAlone", 1, ".\\PedDamageOverhaul.ini");
 	int ini_handsuphostilenpcthreshold = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HandsUpOnDisarmingAllyCount", 2, ".\\PedDamageOverhaul.ini");
-	int ini_handsupdelta = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HandsUpDelta", 2000, ".\\PedDamageOverhaul.ini");
-	float ini_handsupradius = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HandsUpRadius", 20000, ".\\PedDamageOverhaul.ini")) / 100;
+	int ini_handsupdelta = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HandsUpDelta", 500, ".\\PedDamageOverhaul.ini");
+	float ini_handsupradius = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HandsUpRadius", 2000, ".\\PedDamageOverhaul.ini")) / 100;
 	int ini_dsforcedstumbling = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "StumblingBelowDSThreshold", 1, ".\\PedDamageOverhaul.ini");
-	int ini_dismounthandsupdelta = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HandsUpDeltaMounted", 1000, ".\\PedDamageOverhaul.ini");
-	int ini_blipfords = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "MapBlipForNPCsInDS", 0, ".\\PedDamageOverhaul.ini");
+	int ini_dismounthandsupdelta = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HandsUpDeltaMounted", 500, ".\\PedDamageOverhaul.ini");
+	int ini_blipfords = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "MapBlipForNPCsInDS", 1, ".\\PedDamageOverhaul.ini");
 	int toggleKey = VK_F9;
 	int killwoundedkey = VK_F8;
 	int longerbleedoutkey = VK_F7;
@@ -853,6 +852,10 @@ void main()
 				if (pedmap.find(peds[i]) == pedmap.end())
 				{
 					PedAttributes p;
+					
+					//status: default = 0, is not a story character = 1, is a story character = 2
+					p.pedmapisstorychar = 0;
+					
 					/*status:
 					0 = default
 					1 = both legs crippled
@@ -1002,6 +1005,8 @@ void main()
 					p.pedmapblipset = 0;
 
 					p.pedmapdismount = 0;
+
+					p.pedmapdisarmingstop = false;
 
 					pedmap[peds[i]] = p;
 				}
@@ -1162,7 +1167,7 @@ void main()
 						strcpy(f, legshit.c_str());
 						strcpy(g, dyingbool.c_str());
 						strcpy(h, dshistory.c_str());
-						strcpy(j, textpm.c_str());
+						strcpy(j, lastdambone.c_str());
 						DrawText(0.55, 0.05, c);
 						DrawText(0.55, 0.15, j);
 						DrawText(0.55, 0.25, e);
@@ -1297,9 +1302,21 @@ void main()
 				}
 				
 				
-				//bool for checking if current NPC is a story character
-				bool isstorychar = false;
-				if (ini_excludestorynpcs == 1) isstorychar = isPedStoryChar(peds[i]);
+				//checking if current NPC is a story character
+				if (pedmap[peds[i]].pedmapisstorychar == 0) {
+					int charstat = isPedStoryChar(peds[i]);
+					if (charstat == 1)
+					{
+						if (ini_excludefriendlystorynpcs == 1) pedmap[peds[i]].pedmapisstorychar = charstat;
+						else pedmap[peds[i]].pedmapisstorychar = 3;
+					}
+					else if (charstat == 2)
+					{
+						if (ini_excludeotherstorynpcs == 1) pedmap[peds[i]].pedmapisstorychar = charstat;
+						else pedmap[peds[i]].pedmapisstorychar = 3;
+					}
+					else pedmap[peds[i]].pedmapisstorychar = 3;
+				}
 
 				//friendly fire
 				if (friendlyfirebool)
@@ -1320,8 +1337,8 @@ void main()
 					ffchangeexecuted = true;
 				}
 
-				//set health of story characters, if set in the ini
-				if (isstorychar && ini_excludestorynpcs == 1)
+				//set health of friendly story characters, if set in the ini
+				if (pedmap[peds[i]].pedmapisstorychar == 1 && ini_excludefriendlystorynpcs == 1)
 				{
 					if (ini_storypedhealth > 0 && PED::GET_PED_MAX_HEALTH(peds[i]) != ini_storypedhealth)
 					{
@@ -1382,7 +1399,7 @@ void main()
 			//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
 				//if NPC is a non-story-char, is not dead and not the player himself, do stuff
-				if (peds[i] != playerPed && !isstorychar && PED::IS_PED_HUMAN(peds[i]) && !ENTITY::IS_ENTITY_DEAD(peds[i]))
+				if (peds[i] != playerPed && pedmap[peds[i]].pedmapisstorychar == 3 && PED::IS_PED_HUMAN(peds[i]) && !ENTITY::IS_ENTITY_DEAD(peds[i]) && !AI::GET_IS_TASK_ACTIVE(peds[i], 3)) //task 3 is the task for standoff situations (like duels or hostage situations, in which you have to headshot the NPC)
 				{
 					
 					//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
@@ -1467,6 +1484,9 @@ void main()
 					else ishogtied = false;
 					if (AI::GET_IS_TASK_ACTIVE(peds[i], 400) || AI::GET_IS_TASK_ACTIVE(peds[i], 600)) islassoed = true;
 					else islassoed = false;
+
+					//set disarming stop for duelling npcs
+					if (AI::GET_IS_TASK_ACTIVE(peds[i], 3)) pedmap[peds[i]].pedmapdisarmingstop = true;
 
 					//initialize variables for checking NPC stance
 					//position of ground for NPC bone checks - is NPC on ground?
@@ -1775,7 +1795,7 @@ void main()
 								pedmap[peds[i]].pedmapdown = 0;
 							}
 
-							if (!pedmap[peds[i]].pedmapishanging)
+							if (!pedmap[peds[i]].pedmapishanging && !AI::GET_IS_TASK_ACTIVE(peds[i], 11))
 							{
 								if (pedmap[peds[i]].pedmaphandsup != 0)
 								{
@@ -2060,7 +2080,7 @@ void main()
 							
 							//disarming and according behavior
 							int randdis = 0 + (std::rand() % (99 - 0 + 1));
-							if (randdis < ini_disarmingchance)
+							if (randdis < ini_disarmingchance && !pedmap[peds[i]].pedmapdisarmingstop)
 							{
 								if ((actBone == 11300 || actBone == 16749 || actBone == 16781 || actBone == 54187 || actBone == 22798 || actBone == 46065))// && !WEAPON::xIS_PED_UNARMED(peds[i]))
 								{
