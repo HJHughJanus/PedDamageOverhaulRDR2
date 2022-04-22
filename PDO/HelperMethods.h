@@ -13,109 +13,106 @@ using namespace std;
 struct PedAttributes
 {
 	//container for flag if ped is a story character (0 is default, 1 is friendly story char (like a gang member), 2 is other story char (like the gunslingers), 3 is not any story char
-	int pedmapisstorychar;
+	int isstorychar;
 	//container for peds and their status (is burning, is shot in the leg, is shot in both legs, etc.)
-	int pedmapstat;
-	//container for peds and a flag for doing something (is used during the dying states to be able to stop the NPC from moving (when the value is 0))
-	int pedmapdosomething;
-	//container for peds and time passed since they have been doing something (is used during the dying states to be able to make NPCs move for a certain amount of time)
-	int pedmaptime;
+	int status;
 	//container for peds and their current health (for checking if damage was dealt - mostly used for reactions like "hands up" or cowering (if enough damage is done, NPCs will then flee))
-	int pedmaphealth;
+	int health;
 	//container for peds and a value to decide whether dying states kick in or vanilla behavior is triggered
-	bool pedmapdyingstatebool;
+	bool dyingstatebool;
 	//container for peds and a value to calculate the limb specific damage
-	int pedmaplimbhealth;
+	int limbhealth;
 	//container for peds and a value for dying movement stage 1 (for remembering if it has been entered before)
-	int pedmapdyingstate1entered;
+	int dyingstate1entered;
 	//container for peds and a value for dying movement stage 2 (for remembering if it has been entered before)
-	int pedmapdyingstate2entered;
+	int dyingstate2entered;
 	//container for peds and a value for dying movement stage 3 (for remembering if it has been entered before)
-	int pedmapdyingstate3entered;
+	int dyingstate3entered;
 	//container for peds and a value for animation transitioning in dying state 1
-	int pedmapanimtrans;
+	int animtrans;
 	//container for ped health (for NPC pain reactions during dying states)
-	int pedmaphealthds;
+	int healthds;
 	//container for ped stumbling (euphoria enabled or not)
-	int pedmapeuph;
+	int euphstumblingenabled;
 	//container for ped animation use in dying states
-	int pedmapanimuse;
+	int dsanimationused;
 	//container for remembering if ped was k.o.ed
-	int pedmapko;
+	int isknockedout;
 	//container for flag if ped is falling
-	int pedmapisfalling;
+	int isfalling;
 	//container for remembering how long ped has been falling
-	int pedmapfalltime;
+	int falltime;
 	//container for flag if ped is to be killed
-	int pedmapkill;
+	int tobekilled;
 	//container for flag if ped is to be downed
-	int pedmapdown;
+	int tobedowned;
 	//container for flag if ped was hit in the torso
-	int pedmaptorsohit;
+	int torsohit;
 	//container for the ped's accuracy
-	int pedmapaccuracy;
+	int accuracy;
 	//container for flag if ped is down
-	int pedmapisdown;
+	int isdown;
 	//container for flag if ped is dead
-	int pedmapisdead;
+	int isdead;
 	//container for flag if ped is has reacted to other peds dying in combat
-	int pedmaphasreacted;
+	int hasreacted;
 	//container for bool if ped should bleed
-	bool pedmapnobleeding;
+	bool nobleeding;
 	//container for time when ped was last on a mount
-	int pedmaplasttimeonmount;
-	//container for delaying the dying state effects, so euphoria motions can be fully executed
-	int pedmapdsdelaytimer;
+	int lasttimeonmount;
 	//container for stumbling time
-	int pedmapstumbling;
+	int stumblingtime;
 	//container for making sure peds don't stand still
-	Vector3 pedmapheadvecdelta;
-	int pedmapheadvectime;
+	Vector3 headvecdelta;
+	int headvectime;
 	//container for last fear audio (to prevent repeating audio)
-	int pedmaplastfearaudio;
+	int lastfearaudio;
 	//container for how many times the right leg of an NPC was hit
-	int pedmaprightleghitcounter;
+	int rightleghitcounter;
 	//container for how many times the left leg of an NPC was hit
-	int pedmapleftleghitcounter;
+	int leftleghitcounter;
 	//container for damaged legs triggering falling down into dying states
-	int pedmaplegsdamageddowntime;
+	int legsdamageddowntime;
 	//container for timer of peds being saved from bleeing out (to not die from leg shots)
-	int pedmaplegsdown;
+	int legsdownsurvivaltimer;
 	//container for timer (fire audio interval)
-	int pedmapfireaudiotime;
+	int fireaudiotime;
 	//container for last sound used (to prevent looping)
-	int pedmapfireaudiosample;
+	int fireaudiosample;
 	//container for bool if ped is bleeding from an artery shot
-	bool pedmaparteryshot;
+	bool arteryshot;
 	//container for bool if ped has been aimed at when down
-	bool pedmapwasaimedat;
+	bool wasaimedat;
 	//container for bool if ped has been aimed at when down
-	bool pedmaphasbeendamagedbyweapon;
+	bool hasbeendamagedbyweapon;
 	//container for bool if ped is hanging (TieYourLasso mod)
-	bool pedmapishanging;
+	bool ishanging;
 	//container for hanging time (TieYourLasso mod)
-	int pedmaphangingtime;
+	int hangingtime;
 	//container for the last time the ped was shot by the player
-	int pedmapshotbyplayer;
+	int shotbyplayer;
 	//container for bool if ped was fighting against the player alone
-	bool pedmapwasnotaloneincombat;
+	bool wasnotaloneincombat;
 	//container for bool if ped is in combat with player
-	bool pedmapisincombatwithplayer;
+	bool isincombatwithplayer;
 	//container for when ped should be in hands-up task
-	int pedmaphandsup;
+	int handsup;
 	//container for the first time a ped was forced into "hands up"
-	int pedmapfirsttimehandsup;
+	int firsttimehandsup;
 	//container for the information if a ped is or was armed and has been disarmed
-	bool pedmapisarmed;
-	bool pedmapwasdisarmed;
+	bool isarmed;
+	bool wasdisarmed;
 	//container for remembering which movement style ped is supposed to have
-	char* pedmapmovement;
+	char* movementstyle;
 	//container for remembering if ped blip is set
-	Blip pedmapblipset;
+	Blip blipset;
 	//container for remembering when ped did a forced dismount (for surrendering)
-	int pedmapdismount;
+	int dismount;
 	//container for remembering if ped should be immune to disarms (only used for duels, so ingame disarms occur naturally)
-	bool pedmapdisarmingstop;
+	bool disarmingstop;
+	//container for remembering if ped is police or not and in which distance police might dismount in a fight (to go for cover)
+	bool ispolice;
+	float policedismountdistance;
 };
 
 struct ScriptedSpeechParams
@@ -175,20 +172,24 @@ int isPedStoryChar(Ped ped)
 
 	std::map<int, char*>::iterator pedmodels_it = pedmodels.begin();
 	
-	//NPCs listed above
+	//friendly NPCs
 	while (pedmodels_it != pedmodels.end())
 	{
 		char* pedmodel = pedmodels_it->second;
 		if (PED::IS_PED_MODEL(ped, GAMEPLAY::GET_HASH_KEY(pedmodel))) return 1;
 		pedmodels_it++;
 	}
+
+	//Epilogue: Charles, Mr. Devon, Mr. Wayne
+	if (PED::IS_PED_MODEL(ped, 1407031519) || PED::IS_PED_MODEL(ped, 2828949318) || PED::IS_PED_MODEL(ped, 2695284288)) return 1;
 	
+
+	//other NPCs
 	if (PED::IS_PED_MODEL(ped, 1045059103) || PED::IS_PED_MODEL(ped, 1765636093) || PED::IS_PED_MODEL(ped, 847448713) //NPCs from "Spines of America" mission
 		|| PED::IS_PED_MODEL(ped, 3273604429) //Danbury from "American Fathers II" mission
 		|| PED::IS_PED_MODEL(ped, 4196879928) || PED::IS_PED_MODEL(ped, 3736835937) || PED::IS_PED_MODEL(ped, 1347320453) //Gunslingers (Emmet Granger, Billy Midnight, Flaco Hernandez)
-		|| PED::IS_PED_MODEL(ped, 2410820464) //Sheriff Malloy
-		|| PED::IS_PED_MODEL(ped, GAMEPLAY::GET_HASH_KEY("CS_bronte")) || PED::IS_PED_MODEL(ped, GAMEPLAY::GET_HASH_KEY("U_M_M_BHT_BENEDICTALLBRIGHT")))
-		return 2;
+		|| PED::IS_PED_MODEL(ped, 2410820464) || PED::IS_PED_MODEL(ped, 1744529953) //Sheriff Malloy, Police Chief Dunbar
+		|| PED::IS_PED_MODEL(ped, GAMEPLAY::GET_HASH_KEY("CS_bronte")) || PED::IS_PED_MODEL(ped, GAMEPLAY::GET_HASH_KEY("U_M_M_BHT_BENEDICTALLBRIGHT"))) return 2;
 
 	return 3;
 }
@@ -201,6 +202,32 @@ int PedFear(Ped ped, int mode, int lastfearaudio, int ds2chance) //returns last 
 	//setting up the speech options
 	if (mode == 1) //dying stage 1
 	{
+		/*
+		PANIC_HELP
+		SCREAM_SHOCKED
+		SCREAM_TERROR
+		PAIN_EXERT_AGGRO
+		PAIN_EXERT_TIMID
+		PAIN_LOW
+		PAIN_STRUGGLE
+		GENERIC_AFRAID_REACTION
+		GENERIC_SHOCKED_HIGH
+		GENERIC_CURSE_HIGH
+		NEED_HELP "come on, no"
+		NEED_SOME_HELP - nothing?
+		LEAVE_ME_PLEAD - nothing?
+		PLEAD_HOGTIED
+		GUN_BEG
+		ALLY_COMBAT_ENGAGE_INJURED - nothing?
+		ALLY_COMBAT_STATUS_INJURED
+		SERIOUSLY_WOUNDED_MOAN - nothing?
+		SCARED_COMMUNICATE - nothing?
+		SCARED_HELP
+		INTIMIDATED_GEN
+		INTIMIDATED_AGAIN_GEN
+		PLEAD
+		*/
+		
 		speech[1] = "PANIC_HELP";
 		speech[2] = "GENERIC_SHOCKED_HIGH";
 		speech[3] = "SCARED_HELP";
