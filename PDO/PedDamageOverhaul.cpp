@@ -82,8 +82,12 @@ void main()
 	float ini_meleemodifier = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "MeleeModifier", 95, ".\\PedDamageOverhaul.ini")) / 100;
 	float ini_npcweaponmodifier = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCWeaponModifier", 230, ".\\PedDamageOverhaul.ini")) / 100;
 	float ini_npcmeleemodifier = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCMeleeModifier", 105, ".\\PedDamageOverhaul.ini")) / 100;
-	int ini_friendlystorypedhealth = GetPrivateProfileInt("PedDamageConfiguration_Basic", "FriendlyStoryNPCHealth", 450, ".\\PedDamageOverhaul.ini");
-	int ini_otherstorypedhealth = GetPrivateProfileInt("PedDamageConfiguration_Basic", "OtherStoryNPCHealth", 200, ".\\PedDamageOverhaul.ini");
+	int ini_friendlystorypedhealthmin = GetPrivateProfileInt("PedDamageConfiguration_Basic", "FriendlyStoryNPCHealthMin", 450, ".\\PedDamageOverhaul.ini");
+	int ini_friendlystorypedhealthmax = GetPrivateProfileInt("PedDamageConfiguration_Basic", "FriendlyStoryNPCHealthMax", 450, ".\\PedDamageOverhaul.ini");
+	int ini_otherstorypedhealthmin = GetPrivateProfileInt("PedDamageConfiguration_Basic", "OtherStoryNPCHealthMin", 200, ".\\PedDamageOverhaul.ini");
+	int ini_otherstorypedhealthmax = GetPrivateProfileInt("PedDamageConfiguration_Basic", "OtherStoryNPCHealthMax", 200, ".\\PedDamageOverhaul.ini");
+	int ini_lawpedhealthmin = GetPrivateProfileInt("PedDamageConfiguration_Basic", "PoliceNPCHealthMin", 75, ".\\PedDamageOverhaul.ini");
+	int ini_lawpedhealthmax = GetPrivateProfileInt("PedDamageConfiguration_Basic", "PoliceNPCHealthMax", 75, ".\\PedDamageOverhaul.ini");
 	int ini_togglekey = GetPrivateProfileInt("PedDamageConfiguration_Basic", "ToggleKey", 9, ".\\PedDamageOverhaul.ini");
 	int ini_disablemodinmissions = GetPrivateProfileInt("PedDamageConfiguration_Basic", "DisableModInMissions", 0, ".\\PedDamageOverhaul.ini");
 	int ini_friendlyfirekey = GetPrivateProfileInt("PedDamageConfiguration_Basic", "FirendlyFireKey", 2, ".\\PedDamageOverhaul.ini");
@@ -95,7 +99,8 @@ void main()
 	int ini_playerinvincibility = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "PlayerInvincibility", 0, ".\\PedDamageOverhaul.ini");
 	int ini_survivfirchance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "FireSurvivalChance", 23, ".\\PedDamageOverhaul.ini");
 	int ini_firehealth = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "FireHealth", 320, ".\\PedDamageOverhaul.ini");
-	int ini_pedhealth = GetPrivateProfileInt("PedDamageConfiguration_Basic", "NPCHealth", 75, ".\\PedDamageOverhaul.ini");
+	int ini_pedhealthmin = GetPrivateProfileInt("PedDamageConfiguration_Basic", "NPCHealthMin", 75, ".\\PedDamageOverhaul.ini");
+	int ini_pedhealthmax = GetPrivateProfileInt("PedDamageConfiguration_Basic", "NPCHealthMax", 75, ".\\PedDamageOverhaul.ini");
 	int ini_pedhealthvehicle = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCHealthInVehicles", 70, ".\\PedDamageOverhaul.ini");
 	float ini_pedhealthvehiclemodtods = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCHealthVehicleToDyingState", 75, ".\\PedDamageOverhaul.ini")) / 100;
 	float ini_pedhealthvehiclemodtofull = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCHealthVehicleToFull", 90, ".\\PedDamageOverhaul.ini")) / 100;
@@ -890,7 +895,12 @@ void main()
 				{
 					PedAttributes p;
 					
-					//status: default = 0, is not a story character = 1, is a story character = 2
+					/*status:
+					0 = default
+					1 = friendly story character
+					2 = other story character
+					3 = none of the above
+					*/
 					p.isstorychar = 0;
 					
 					/*status:
@@ -1044,6 +1054,10 @@ void main()
 						p.policedismountdistance = dismrand;
 					}
 					else p.ispolice = false;
+
+					p.maxhealth = 0;
+
+					p.usemaxhealth = 0;
 
 					pedmap[peds[i]] = p;
 				}
@@ -1347,21 +1361,95 @@ void main()
 				}
 				
 				
-				//checking if current NPC is a story character
+				//checking if current NPC is a story character and calculate max health (if its used is decided elsewhere)
 				if (pedmap[peds[i]].isstorychar == 0) {
 					int charstat = isPedStoryChar(peds[i]);
+					int maxhealth;
+					int minhealth;
 					if (charstat == 1)
 					{
-						if (ini_excludefriendlystorynpcs == 1) pedmap[peds[i]].isstorychar = charstat;
-						else pedmap[peds[i]].isstorychar = 3;
+						minhealth = ini_friendlystorypedhealthmin;
+						maxhealth = ini_friendlystorypedhealthmax;
 					}
 					else if (charstat == 2)
 					{
-						if (ini_excludeotherstorynpcs == 1) pedmap[peds[i]].isstorychar = charstat;
-						else pedmap[peds[i]].isstorychar = 3;
+						minhealth = ini_otherstorypedhealthmin;
+						maxhealth = ini_otherstorypedhealthmax;
 					}
-					else pedmap[peds[i]].isstorychar = 3;
+					else
+					{
+						if (pedmap[peds[i]].ispolice)
+						{
+							minhealth = ini_lawpedhealthmin;
+							maxhealth = ini_lawpedhealthmax;
+						}
+						else
+						{
+							minhealth = ini_pedhealthmin;
+							maxhealth = ini_pedhealthmax;
+						}
+					}
+
+					pedmap[peds[i]].isstorychar = charstat;
+
+					if (pedmap[peds[i]].maxhealth == 0)
+					{
+						pedmap[peds[i]].maxhealth = minhealth + (std::rand() % (maxhealth - minhealth + 1));
+					}
 				}
+
+				//set health of story characters, if set in the ini
+				//set if story characters are affected by the mod
+				if (pedmap[peds[i]].isstorychar == 1)
+				{
+					if (ini_excludefriendlystorynpcs != 1) pedmap[peds[i]].isstorychar = 3;
+
+					if (pedmap[peds[i]].usemaxhealth == 0)
+					{
+						if (ini_friendlystorypedhealthmin > 0 && ini_friendlystorypedhealthmax > 0)
+						{
+							pedmap[peds[i]].usemaxhealth = 2;
+							if (PED::GET_PED_MAX_HEALTH(peds[i]) != pedmap[peds[i]].maxhealth)
+							{
+								PED::SET_PED_MAX_HEALTH(peds[i], pedmap[peds[i]].maxhealth);
+								ENTITY::SET_ENTITY_HEALTH(peds[i], pedmap[peds[i]].maxhealth, 0);
+							}
+						}
+					}
+				}
+				else if (pedmap[peds[i]].isstorychar == 2)
+				{
+					if (ini_excludeotherstorynpcs != 1) pedmap[peds[i]].isstorychar = 3;
+
+					if (pedmap[peds[i]].usemaxhealth == 0)
+					{
+						if (ini_otherstorypedhealthmin > 0 && ini_otherstorypedhealthmax > 0)
+						{
+							pedmap[peds[i]].usemaxhealth = 2;
+							if (PED::GET_PED_MAX_HEALTH(peds[i]) != pedmap[peds[i]].maxhealth)
+							{
+								PED::SET_PED_MAX_HEALTH(peds[i], pedmap[peds[i]].maxhealth);
+								ENTITY::SET_ENTITY_HEALTH(peds[i], pedmap[peds[i]].maxhealth, 0);
+							}
+						}
+					}
+				}
+				else if (pedmap[peds[i]].ispolice)
+				{
+					if (pedmap[peds[i]].usemaxhealth == 0)
+					{
+						if (ini_lawpedhealthmin > 0 && ini_lawpedhealthmax > 0)
+						{
+							pedmap[peds[i]].usemaxhealth = 2;
+							if (PED::GET_PED_MAX_HEALTH(peds[i]) != pedmap[peds[i]].maxhealth)
+							{
+								PED::SET_PED_MAX_HEALTH(peds[i], pedmap[peds[i]].maxhealth);
+								ENTITY::SET_ENTITY_HEALTH(peds[i], pedmap[peds[i]].maxhealth, 0);
+							}
+						}
+					}
+				}
+				else pedmap[peds[i]].usemaxhealth = 1;
 
 				//friendly fire
 				if (friendlyfirebool)
@@ -1380,26 +1468,6 @@ void main()
 						PED::SET_RELATIONSHIP_BETWEEN_GROUPS(2, GAMEPLAY::GET_HASH_KEY("REL_GANG_DUTCHS"), GAMEPLAY::GET_HASH_KEY("PLAYER"));
 					}
 					ffchangeexecuted = true;
-				}
-
-				//set health of friendly story characters, if set in the ini
-				if (pedmap[peds[i]].isstorychar == 1 && ini_excludefriendlystorynpcs == 1)
-				{
-					if (ini_friendlystorypedhealth > 0 && PED::GET_PED_MAX_HEALTH(peds[i]) != ini_friendlystorypedhealth)
-					{
-						PED::SET_PED_MAX_HEALTH(peds[i], ini_friendlystorypedhealth);
-						ENTITY::SET_ENTITY_HEALTH(peds[i], ini_friendlystorypedhealth, 0);
-					}
-				}
-
-				//set health of friendly story characters, if set in the ini
-				if (pedmap[peds[i]].isstorychar == 2 && ini_excludeotherstorynpcs == 1)
-				{
-					if (ini_otherstorypedhealth > 0 && PED::GET_PED_MAX_HEALTH(peds[i]) != ini_otherstorypedhealth)
-					{
-						PED::SET_PED_MAX_HEALTH(peds[i], ini_otherstorypedhealth);
-						ENTITY::SET_ENTITY_HEALTH(peds[i], ini_otherstorypedhealth, 0);
-					}
 				}
 
 				//horse health and invincibility
@@ -1677,7 +1745,8 @@ void main()
 					//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
 					//if the NPC does not have the specified health yet, set the health accordingly
-					if ((PED::GET_PED_MAX_HEALTH(peds[i]) != ini_pedhealth && PED::GET_PED_MAX_HEALTH(peds[i]) != ini_pedhealthvehicle) && pedmap[peds[i]].status != 5 && pedmap[peds[i]].status != 4 && pedmap[peds[i]].status != 99)
+					if ((PED::GET_PED_MAX_HEALTH(peds[i]) != pedmap[peds[i]].maxhealth && PED::GET_PED_MAX_HEALTH(peds[i]) != ini_pedhealthvehicle)
+						&& pedmap[peds[i]].status != 5 && pedmap[peds[i]].status != 4 && pedmap[peds[i]].status != 99 && pedmap[peds[i]].usemaxhealth == 1)
 					{
 						if (PED::IS_PED_IN_ANY_VEHICLE(peds[i], false))
 						{
@@ -1687,9 +1756,9 @@ void main()
 						}
 						else
 						{
-							PED::SET_PED_MAX_HEALTH(peds[i], ini_pedhealth);
-							ENTITY::SET_ENTITY_HEALTH(peds[i], ini_pedhealth, 0);
-							npchealth = ini_pedhealth;
+							PED::SET_PED_MAX_HEALTH(peds[i], pedmap[peds[i]].maxhealth);
+							ENTITY::SET_ENTITY_HEALTH(peds[i], pedmap[peds[i]].maxhealth, 0);
+							npchealth = pedmap[peds[i]].maxhealth;
 						}
 					}
 
@@ -1697,7 +1766,7 @@ void main()
 					{
 						if (!PED::IS_PED_IN_ANY_VEHICLE(peds[i], false))
 						{
-							PED::SET_PED_MAX_HEALTH(peds[i], ini_pedhealth);
+							PED::SET_PED_MAX_HEALTH(peds[i], pedmap[peds[i]].maxhealth);
 							if (npchealth <= ini_pedhealthvehicle * ini_pedhealthvehiclemodtods)
 							{
 								ENTITY::SET_ENTITY_HEALTH(peds[i], ini_dyingmovementthreshold - 1, 0);
@@ -1705,8 +1774,8 @@ void main()
 							}
 							else if (npchealth >= ini_pedhealthvehicle * ini_pedhealthvehiclemodtofull)
 							{
-								ENTITY::SET_ENTITY_HEALTH(peds[i], ini_pedhealth, 0);
-								npchealth = ini_pedhealth;
+								ENTITY::SET_ENTITY_HEALTH(peds[i], pedmap[peds[i]].maxhealth, 0);
+								npchealth = pedmap[peds[i]].maxhealth;
 							}
 						}
 					}
@@ -1727,7 +1796,7 @@ void main()
 			//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 									   
 					//if NPC has the specified health and was not burning before, check stuff and do stuff
-					if ((PED::GET_PED_MAX_HEALTH(peds[i]) == ini_pedhealth || PED::GET_PED_MAX_HEALTH(peds[i]) == ini_pedhealthvehicle) && pedmap[peds[i]].status != 4 && pedmap[peds[i]].status != 5)
+					if (pedmap[peds[i]].status != 4 && pedmap[peds[i]].status != 5)
 					{
 
 						//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
@@ -2411,7 +2480,7 @@ void main()
 						//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
 						//put NPC down if hit in the legs enough
-						if (ENTITY::GET_ENTITY_MAX_HEALTH(peds[i], false) == ini_pedhealth && npchealth > ini_dyingmovementthreshold&& pedmap[peds[i]].status != 99
+						if (npchealth > ini_dyingmovementthreshold && pedmap[peds[i]].status != 99
 							&& pedmap[peds[i]].status != 10 && pedmap[peds[i]].status != 11 && ini_nopushingdown == 0)
 						{
 							if (isstanding)
@@ -2661,7 +2730,7 @@ void main()
 										else if (pedmap[peds[i]].hangingtime < GAMEPLAY::GET_GAME_TIMER())
 										{
 											npchealth = ENTITY::GET_ENTITY_HEALTH(peds[i]);
-											if (npchealth + ini_noosehealthboost < ini_pedhealth)
+											if (npchealth + ini_noosehealthboost < pedmap[peds[i]].maxhealth)
 											{
 												ENTITY::SET_ENTITY_HEALTH(peds[i], npchealth + ini_noosehealthboost, 0);
 												npchealth += ini_noosehealthboost;

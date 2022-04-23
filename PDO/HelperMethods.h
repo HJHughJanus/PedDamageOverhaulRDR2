@@ -12,7 +12,7 @@ using namespace std;
 
 struct PedAttributes
 {
-	//container for flag if ped is a story character (0 is default, 1 is friendly story char (like a gang member), 2 is other story char (like the gunslingers), 3 is not any story char
+	//container for flag if ped is a story character (0 is default, 1 is friendly story char (like a gang member), 2 is other story char (like the gunslingers), 3 is not any story char)
 	int isstorychar;
 	//container for peds and their status (is burning, is shot in the leg, is shot in both legs, etc.)
 	int status;
@@ -113,6 +113,9 @@ struct PedAttributes
 	//container for remembering if ped is police or not and in which distance police might dismount in a fight (to go for cover)
 	bool ispolice;
 	float policedismountdistance;
+	//container for the ped's maximum health and if it should be applied (usemaxhealth: 0 = default, 1 = use the health value, 2 = don't use the health value)
+	int maxhealth;
+	int usemaxhealth;
 };
 
 struct ScriptedSpeechParams
