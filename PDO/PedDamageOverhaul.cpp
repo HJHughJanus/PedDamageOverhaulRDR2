@@ -260,6 +260,7 @@ void main()
 	int ini_policedismountdistancemin = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DismountDistanceMin", 20, ".\\PedDamageOverhaul.ini");
 	int ini_policedismountdistancemax = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DismountDistanceMax", 50, ".\\PedDamageOverhaul.ini");
 	int ini_policebehaviordisabledinmissions = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "PoliceBehaviorDisabledInMissions", 1, ".\\PedDamageOverhaul.ini");
+	int ini_excludebodyguardmodnpcs = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ExcludeBodyGuardSpawnerBodyguards", 1, ".\\PedDamageOverhaul.ini");
 	int toggleKey = VK_F9;
 	int killwoundedkey = VK_F8;
 	int longerbleedoutkey = VK_F7;
@@ -1521,8 +1522,13 @@ void main()
 			//
 			//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
+				bool excludebodyguardspawner;
+
+				if (ini_excludebodyguardmodnpcs == 1 && DECORATOR::DECOR_EXIST_ON(peds[i], "BodyguardSpawner")) excludebodyguardspawner = false;
+				else excludebodyguardspawner = true;
+			
 				//if NPC is a non-story-char, is not dead and not the player himself, do stuff
-				if (peds[i] != playerPed && pedmap[peds[i]].isstorychar == 3 && PED::IS_PED_HUMAN(peds[i]) && !ENTITY::IS_ENTITY_DEAD(peds[i]) && !AI::GET_IS_TASK_ACTIVE(peds[i], 3)) //task 3 is the task for standoff situations (like duels or hostage situations, in which you have to headshot the NPC)
+				if (peds[i] != playerPed && excludebodyguardspawner && pedmap[peds[i]].isstorychar == 3 && PED::IS_PED_HUMAN(peds[i]) && !ENTITY::IS_ENTITY_DEAD(peds[i]) && !AI::GET_IS_TASK_ACTIVE(peds[i], 3)) //task 3 is the task for standoff situations (like duels or hostage situations, in which you have to headshot the NPC)
 				{
 					
 					//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
