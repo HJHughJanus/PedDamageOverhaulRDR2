@@ -86,8 +86,8 @@ void main()
 	int ini_friendlystorypedhealthmax = GetPrivateProfileInt("PedDamageConfiguration_Basic", "FriendlyStoryNPCHealthMax", 450, ".\\PedDamageOverhaul.ini");
 	int ini_otherstorypedhealthmin = GetPrivateProfileInt("PedDamageConfiguration_Basic", "OtherStoryNPCHealthMin", 200, ".\\PedDamageOverhaul.ini");
 	int ini_otherstorypedhealthmax = GetPrivateProfileInt("PedDamageConfiguration_Basic", "OtherStoryNPCHealthMax", 200, ".\\PedDamageOverhaul.ini");
-	int ini_lawpedhealthmin = GetPrivateProfileInt("PedDamageConfiguration_Basic", "PoliceNPCHealthMin", 75, ".\\PedDamageOverhaul.ini");
-	int ini_lawpedhealthmax = GetPrivateProfileInt("PedDamageConfiguration_Basic", "PoliceNPCHealthMax", 75, ".\\PedDamageOverhaul.ini");
+	int ini_lawpedhealthmin = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "PoliceNPCHealthMin", 75, ".\\PedDamageOverhaul.ini");
+	int ini_lawpedhealthmax = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "PoliceNPCHealthMax", 75, ".\\PedDamageOverhaul.ini");
 	int ini_togglekey = GetPrivateProfileInt("PedDamageConfiguration_Basic", "ToggleKey", 9, ".\\PedDamageOverhaul.ini");
 	int ini_disablemodinmissions = GetPrivateProfileInt("PedDamageConfiguration_Basic", "DisableModInMissions", 0, ".\\PedDamageOverhaul.ini");
 	int ini_friendlyfirekey = GetPrivateProfileInt("PedDamageConfiguration_Basic", "FirendlyFireKey", 2, ".\\PedDamageOverhaul.ini");
@@ -1773,6 +1773,7 @@ void main()
 						if (!PED::IS_PED_IN_ANY_VEHICLE(peds[i], false))
 						{
 							PED::SET_PED_MAX_HEALTH(peds[i], pedmap[peds[i]].maxhealth);
+							ENTITY::SET_ENTITY_HEALTH(peds[i], npchealth, 0);
 							if (npchealth <= ini_pedhealthvehicle * ini_pedhealthvehiclemodtods)
 							{
 								ENTITY::SET_ENTITY_HEALTH(peds[i], ini_dyingmovementthreshold - 1, 0);
