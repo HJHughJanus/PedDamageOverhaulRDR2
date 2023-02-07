@@ -116,6 +116,8 @@ struct PedAttributes
 	//container for the ped's maximum health and if it should be applied (usemaxhealth: 0 = default, 1 = use the health value, 2 = don't use the health value)
 	int maxhealth;
 	int usemaxhealth;
+	//container for remembering if ped was in a vehicle (for setting the health value)
+	bool isinvehicle;
 };
 
 struct ScriptedSpeechParams
