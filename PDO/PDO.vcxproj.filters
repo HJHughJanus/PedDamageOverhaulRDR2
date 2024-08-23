@@ -20,7 +20,9 @@
     <ClInclude Include="inc\main.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="HelperMethods.h" />
+    <ClInclude Include="MiscFunctions.h" />
+    <ClInclude Include="SetUpFunctions.h" />
+    <ClInclude Include="Structs.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="include">

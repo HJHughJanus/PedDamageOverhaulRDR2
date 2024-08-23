@@ -17,6 +17,7 @@ ID: PDO012 KILL NPCs WHEN IN DYING STATE TOO LONG
 ID: PDO013 STOP BLEEDING FOR KNOCKED OUT NPCs OR THOSE IN MELEE FIGHTS
 ID: PDO014 NPC FALLING CHECKS
 ID: PDO015 HORSE FALLING DELTA
+ID: PDO015x NPC SURRENDERING
 ID: PDO016 LASSO DISARMING
 ID: PDO017 HOGTIE DISARMING
 ID: PDO018 NPC FEAR FEATURE (FLEEING DURING COMBAT)
@@ -45,33 +46,32 @@ ID: PDO039 FIRE / BURNING
 
 #include "script.h"
 #include "keyboard.h"
-#include "HelperMethods.h"
+#include "MiscFunctions.h"
+#include "SetUpFunctions.h"
+#include "Structs.h"
 
 #include <unordered_map>
 #include <vector>
 #include <string>
-#include <ctime>
 #include <map>
-#include <fstream>
-
-using namespace std;
+#include <array>
 
 //main logic
 void main()
-{		
-	
-//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
-//
-//
-//								SETUP (READING IN INI VALUES, SETTING UP GLOBAL VARIABLES, ETC.), ID: PDO001
-//
-//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
+{
+
+	//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
+	//
+	//
+	//								SETUP (READING IN INI VALUES, SETTING UP GLOBAL VARIABLES, ETC.), ID: PDO001
+	//
+	//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
 
-	//checking if there is an ini file (used for drawing according information on screen)
+		//checking if there is an ini file (used for drawing according information on screen)
 	bool iniexists = false;
-	iniexists = does_file_exist(".\\PedDamageOverhaul.ini");	
-	
+	iniexists = does_file_exist(".\\PedDamageOverhaul.ini");
+
 	//getting values from the ini or setting default values, if ini not there (default represent mod version "standard" of v1.41)
 	int ini_shownpchealth = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ShowNPCHealth", 0, ".\\PedDamageOverhaul.ini");
 	int ini_showpedmodel = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ShowNPCModel", 0, ".\\PedDamageOverhaul.ini");
@@ -131,16 +131,16 @@ void main()
 	float ini_dforcepushy = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingForcePushY", 5, ".\\PedDamageOverhaul.ini")) / 10;
 	float ini_dforcepushz = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingForcePushZ", 5, ".\\PedDamageOverhaul.ini")) / 10;
 	float ini_dyingmovementenablespeed = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingMovementEnableWhenSpeedLowerThan", 10, ".\\PedDamageOverhaul.ini")) / 10;
-	float ini_zvaluehead = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ZValueForHeadBone", 260, ".\\PedDamageOverhaul.ini")) / 1000;
+	float ini_zvaluehead = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ZValueForHeadBone", 500, ".\\PedDamageOverhaul.ini")) / 1000;
 	float ini_zvaluehip = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ZValueForHipBone", 500, ".\\PedDamageOverhaul.ini")) / 1000;
 	int ini_ignoreupvec = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "IgnoreUpVector", 1, ".\\PedDamageOverhaul.ini");
 	int ini_dforceisrelative = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "IsDyingForceRelative", 0, ".\\PedDamageOverhaul.ini");
 	int ini_ddirectionisrelative = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "IsDyingDirectionRelative", 1, ".\\PedDamageOverhaul.ini");
 	int ini_dyingpushchance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingPushChance", 600, ".\\PedDamageOverhaul.ini");
-	int ini_bleedingchance_shot = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingChanceShot", 21, ".\\PedDamageOverhaul.ini");
-	int ini_bleedingchance_dying1 = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingChanceDying1", 12, ".\\PedDamageOverhaul.ini");
-	int ini_bleedingchance_dying2 = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingChanceDying2", 6, ".\\PedDamageOverhaul.ini");
-	int ini_longerbleedingchance = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "LongerBleedingChance", 3, ".\\PedDamageOverhaul.ini");
+	float ini_bleedingchance_shot = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingChanceShot", 210, ".\\PedDamageOverhaul.ini")) / 10;
+	float ini_bleedingchance_dying1 = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingChanceDying1", 120, ".\\PedDamageOverhaul.ini")) / 10;
+	float ini_bleedingchance_dying2 = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "BleedingChanceDying2", 60, ".\\PedDamageOverhaul.ini")) / 10;
+	float ini_longerbleedingchance = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "LongerBleedingChance", 30, ".\\PedDamageOverhaul.ini")) / 10;
 	int ini_longerbleedingvalue = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "LongerBleedingValue", 4, ".\\PedDamageOverhaul.ini");
 	int ini_dirreloneleg = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "IsDirectionRelativeOneLeg", 1, ".\\PedDamageOverhaul.ini");
 	int ini_forreloneleg = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "IsForceRelativeOneLeg", 0, ".\\PedDamageOverhaul.ini");
@@ -176,7 +176,7 @@ void main()
 	int ini_panicchancerag = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "PanicChanceHelpless", 5, ".\\PedDamageOverhaul.ini");
 	int ini_excludefriendlystorynpcs = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ExcludeFriendlyStoryNPCs", 1, ".\\PedDamageOverhaul.ini");
 	int ini_excludeotherstorynpcs = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ExcludeOtherStoryNPCs", 1, ".\\PedDamageOverhaul.ini");
-	float ini_legdamagemod =  1 - ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "LegDamageModifier", 1, ".\\PedDamageOverhaul.ini")) / 100;
+	float ini_legdamagemod = 1 - ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "LegDamageModifier", 1, ".\\PedDamageOverhaul.ini")) / 100;
 	float ini_armdamagemod = 1 - ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ArmDamageModifier", 1, ".\\PedDamageOverhaul.ini")) / 100;
 	float ini_torsodamagemod = 1 - ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "TorsoDamageModifier", 120, ".\\PedDamageOverhaul.ini")) / 100;
 	float ini_headdamagemod = 1 - ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "HeadDamageModifier", 150, ".\\PedDamageOverhaul.ini")) / 100;
@@ -200,7 +200,7 @@ void main()
 	float ini_npcdownfearchance = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "NPCFearChance", 200, ".\\PedDamageOverhaul.ini")) / 10;
 	int ini_cowerchancefear = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "FearCowerChance", 5, ".\\PedDamageOverhaul.ini");
 	int ini_handsupchancefear = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "FearHandsUpChance", 55, ".\\PedDamageOverhaul.ini");
-	int ini_fleechancefear = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "FearFleeingChance", 40, ".\\PedDamageOverhaul.ini");	
+	int ini_fleechancefear = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "FearFleeingChance", 40, ".\\PedDamageOverhaul.ini");
 	int ini_fearfleeultimately = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "FearFleeUltimately", 1, ".\\PedDamageOverhaul.ini");
 	float ini_playersneaknoisemult = ((float)GetPrivateProfileInt("PedDamageConfiguration_Advanced", "SneakNoiseMultiplier", 0, ".\\PedDamageOverhaul.ini")) / 100;
 	int ini_reactiononaim = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DyingStateAimReaction", 75, ".\\PedDamageOverhaul.ini");
@@ -263,190 +263,61 @@ void main()
 	int ini_policebehaviordisabledinmissions = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "PoliceBehaviorDisabledInMissions", 1, ".\\PedDamageOverhaul.ini");
 	int ini_longerbleedoutdisabledinmissions = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DisableLongerBleedoutInMissions", 1, ".\\PedDamageOverhaul.ini");
 	int ini_excludebodyguardmodnpcs = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ExcludeBodyGuardSpawnerBodyguards", 1, ".\\PedDamageOverhaul.ini");
+	int ini_tickinterval = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "TickInterval", 200, ".\\PedDamageOverhaul.ini");
+	int ini_clearnpcsaftertickinterval = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "ClearNPCsAfterTickIntervals", 100, ".\\PedDamageOverhaul.ini");
+	bool ini_dropnpcindyingstate = GetPrivateProfileInt("PedDamageConfiguration_Advanced", "DropNPCInDyingState", 1, ".\\PedDamageOverhaul.ini");
+	
+	//storing certain ini values in one object, so it can be passed to functions needing them
+	std::unordered_map<std::string, float> iniValues;
+	iniValues["ini_excludebodyguardmodnpcs"] = ini_excludebodyguardmodnpcs;
+	iniValues["ini_policedismountdistancemin"] = ini_policedismountdistancemin;
+	iniValues["ini_policedismountdistancemax"] = ini_policedismountdistancemax;
+	iniValues["ini_dyingstatechance"] = ini_dyingstatechance;
+	iniValues["ini_useanimchance"] = ini_useanimchance;
+	iniValues["ini_euphoriastumblechance"] = ini_euphoriastumblechance;
+	iniValues["ini_friendlystorypedhealthmin"] = ini_friendlystorypedhealthmin;
+	iniValues["ini_friendlystorypedhealthmax"] = ini_friendlystorypedhealthmax;
+	iniValues["ini_otherstorypedhealthmin"] = ini_otherstorypedhealthmin;
+	iniValues["ini_otherstorypedhealthmax"] = ini_otherstorypedhealthmax;
+	iniValues["ini_lawpedhealthmin"] = ini_lawpedhealthmin;
+	iniValues["ini_lawpedhealthmax"] = ini_lawpedhealthmax;
+	iniValues["ini_pedhealthmin"] = ini_pedhealthmin;
+	iniValues["ini_pedhealthmax"] = ini_pedhealthmax;
+	iniValues["ini_excludefriendlystorynpcs"] = ini_excludefriendlystorynpcs;
+	iniValues["ini_excludeotherstorynpcs"] = ini_excludeotherstorynpcs;
+	iniValues["ini_shownpchealth"] = ini_shownpchealth;
+	iniValues["ini_showpedmodel"] = ini_showpedmodel;
+	iniValues["ini_showpedtasks"] = ini_showpedtasks;
+	
+	//setting up hotkeys
 	int toggleKey = VK_F9;
+	bool toggleKeyBound;
 	int killwoundedkey = VK_F8;
+	bool killWoundedKeyBound;
 	int longerbleedoutkey = VK_F7;
+	bool longerBleedoutKeyBound;
 	int friendlyfirekey = VK_F2;
+	bool friendlyFireKeyBound;
 
-	switch (ini_togglekey)
-	{
-	case 1:
-		toggleKey = VK_F1;
-		break;
-	case 2:
-		toggleKey = VK_F2;
-		break;
-	case 3:
-		toggleKey = VK_F3;
-		break;
-	case 4:
-		toggleKey = VK_F4;
-		break;
-	case 5:
-		toggleKey = VK_F5;
-		break;
-	case 6:
-		toggleKey = VK_F6;
-		break;
-	case 7:
-		toggleKey = VK_F7;
-		break;
-	case 8:
-		toggleKey = VK_F8;
-		break;
-	case 9:
-		toggleKey = VK_F9;
-		break;
-	case 10:
-		toggleKey = VK_F10;
-		break;
-	case 11:
-		toggleKey = VK_F11;
-		break;
-	case 12:
-		toggleKey = VK_F12;
-		break;
-	default:
-		toggleKey = VK_F9;
-	}
+	toggleKeyBound = SetKey(&toggleKey, ini_togglekey);
+	killWoundedKeyBound = SetKey(&killwoundedkey, ini_killwoundedkey);
+	longerBleedoutKeyBound = SetKey(&longerbleedoutkey, ini_longerbleedoutkey);
+	friendlyFireKeyBound = SetKey(&friendlyfirekey, ini_friendlyfirekey);
 
-	switch (ini_killwoundedkey)
-	{
-	case 1:
-		killwoundedkey = VK_F1;
-		break;
-	case 2:
-		killwoundedkey = VK_F2;
-		break;
-	case 3:
-		killwoundedkey = VK_F3;
-		break;
-	case 4:
-		killwoundedkey = VK_F4;
-		break;
-	case 5:
-		killwoundedkey = VK_F5;
-		break;
-	case 6:
-		killwoundedkey = VK_F6;
-		break;
-	case 7:
-		killwoundedkey = VK_F7;
-		break;
-	case 8:
-		killwoundedkey = VK_F8;
-		break;
-	case 9:
-		killwoundedkey = VK_F9;
-		break;
-	case 10:
-		killwoundedkey = VK_F10;
-		break;
-	case 11:
-		killwoundedkey = VK_F11;
-		break;
-	case 12:
-		killwoundedkey = VK_F12;
-		break;
-	default:
-		killwoundedkey = VK_F8;
-	}
-
-	switch (ini_longerbleedoutkey)
-	{
-	case 1:
-		longerbleedoutkey = VK_F1;
-		break;
-	case 2:
-		longerbleedoutkey = VK_F2;
-		break;
-	case 3:
-		longerbleedoutkey = VK_F3;
-		break;
-	case 4:
-		longerbleedoutkey = VK_F4;
-		break;
-	case 5:
-		longerbleedoutkey = VK_F5;
-		break;
-	case 6:
-		longerbleedoutkey = VK_F6;
-		break;
-	case 7:
-		longerbleedoutkey = VK_F7;
-		break;
-	case 8:
-		longerbleedoutkey = VK_F8;
-		break;
-	case 9:
-		longerbleedoutkey = VK_F9;
-		break;
-	case 10:
-		longerbleedoutkey = VK_F10;
-		break;
-	case 11:
-		longerbleedoutkey = VK_F11;
-		break;
-	case 12:
-		longerbleedoutkey = VK_F12;
-		break;
-	default:
-		longerbleedoutkey = VK_F7;
-	}
-
-	switch (ini_friendlyfirekey)
-	{
-	case 1:
-		friendlyfirekey = VK_F1;
-		break;
-	case 2:
-		friendlyfirekey = VK_F2;
-		break;
-	case 3:
-		friendlyfirekey = VK_F3;
-		break;
-	case 4:
-		friendlyfirekey = VK_F4;
-		break;
-	case 5:
-		friendlyfirekey = VK_F5;
-		break;
-	case 6:
-		friendlyfirekey = VK_F6;
-		break;
-	case 7:
-		friendlyfirekey = VK_F7;
-		break;
-	case 8:
-		friendlyfirekey = VK_F8;
-		break;
-	case 9:
-		friendlyfirekey = VK_F9;
-		break;
-	case 10:
-		friendlyfirekey = VK_F10;
-		break;
-	case 11:
-		friendlyfirekey = VK_F11;
-		break;
-	case 12:
-		friendlyfirekey = VK_F12;
-		break;
-	default:
-		friendlyfirekey = VK_F2;
-	}
-
-	float runningthresholdbothlegs = ini_runningthresholdbothlegs / 10;
-	float runningthresholdoneleg = ini_runningthresholdoneleg / 10;
-	float dsrunningthresholdbothlegs = ini_dsrunningthresholdbothlegs / 10;
-	float dsrunningthresholdoneleg = ini_dsrunningthresholdoneleg / 10;
-	float maxragdollspeed = ini_maxragdollspeed / 10;
-	float maxragdollspeed2 = ini_maxragdollspeed2 / 10;
+	//setting up correct speed thresholds for stumbling and ragdolling
+	const float runningthresholdbothlegs = ini_runningthresholdbothlegs / 10;
+	const float runningthresholdoneleg = ini_runningthresholdoneleg / 10;
+	const float dsrunningthresholdbothlegs = ini_dsrunningthresholdbothlegs / 10;
+	const float dsrunningthresholdoneleg = ini_dsrunningthresholdoneleg / 10;
+	const float maxragdollspeed = ini_maxragdollspeed / 10;
+	const float maxragdollspeed2 = ini_maxragdollspeed2 / 10;
 
 	//making sure euphoria settings do not make NPCs in cover sack down when using euphoria mods
+	/*
 	if (ini_nopushingdown == 1) {
-		ini_zvaluehead = 70;
+		ini_zvaluehead = 2.0f;
 	}
+	*/
 
 	//making sure disarm reaction chances are set to valid values
 	if (ini_disarmattackchance + ini_disarmcowerchance + ini_disarmfleeingchance + ini_disarmhandsupchance != 100)
@@ -465,162 +336,36 @@ void main()
 		ini_fleechancefear = 40;
 	}
 
-	//container for peds and their attributes
-	std::map<Ped, PedAttributes> pedmap;
-	
+	//container for NPCs and their attributes
+	std::tr1::unordered_map<Ped, PedAttributes> pedmap;
+
+	//container for story NPCs
+	const std::vector<Hash> friendlyStoryNPCs = getFriendlyStoryPedList();
+	const std::vector<Hash> otherStoryNPCs = getOtherStoryPedList();
+
 	//container for weapons which cause bleeding
-	std::map<int, char*> allweaponmap;
-	allweaponmap[0] = "WEAPON_MELEE_HATCHET";
-	allweaponmap[1] = "WEAPON_MELEE_CLEAVER";
-	allweaponmap[2] = "WEAPON_MELEE_ANCIENT_HATCHET";
-	allweaponmap[3] = "WEAPON_MELEE_HATCHET_VIKING";
-	allweaponmap[4] = "WEAPON_MELEE_HATCHET_HEWING";
-	allweaponmap[5] = "WEAPON_MELEE_HATCHET_DOUBLE_BIT";
-	allweaponmap[6] = "WEAPON_MELEE_HATCHET_DOUBLE_BIT_RUSTED";
-	allweaponmap[7] = "WEAPON_MELEE_HATCHET_HUNTER";
-	allweaponmap[8] = "WEAPON_MELEE_HATCHET_HUNTER_RUSTED";
-	allweaponmap[9] = "WEAPON_MELEE_KNIFE_JOHN";
-	allweaponmap[10] = "WEAPON_MELEE_KNIFE";
-	allweaponmap[11] = "WEAPON_MELEE_KNIFE_JAWBONE";
-	allweaponmap[12] = "WEAPON_THROWN_THROWING_KNIVES";
-	allweaponmap[13] = "WEAPON_MELEE_KNIFE_MINER";
-	allweaponmap[14] = "WEAPON_MELEE_KNIFE_CIVIL_WAR";
-	allweaponmap[15] = "WEAPON_MELEE_KNIFE_BEAR";
-	allweaponmap[16] = "WEAPON_MELEE_KNIFE_VAMPIRE";
-	allweaponmap[17] = "WEAPON_MELEE_MACHETE";
-	allweaponmap[18] = "WEAPON_THROWN_TOMAHAWK";
-	allweaponmap[19] = "WEAPON_THROWN_TOMAHAWK_ANCIENT";
-	allweaponmap[20] = "WEAPON_PISTOL_M1899";
-	allweaponmap[21] = "WEAPON_PISTOL_MAUSER";
-	allweaponmap[22] = "WEAPON_PISTOL_MAUSER_DRUNK";
-	allweaponmap[23] = "WEAPON_PISTOL_SEMIAUTO";
-	allweaponmap[24] = "WEAPON_PISTOL_VOLCANIC";
-	allweaponmap[25] = "WEAPON_REPEATER_CARBINE";
-	allweaponmap[26] = "WEAPON_REPEATER_EVANS";
-	allweaponmap[27] = "WEAPON_REPEATER_HENRY";
-	allweaponmap[28] = "WEAPON_RIFLE_VARMINT";
-	allweaponmap[29] = "WEAPON_REPEATER_WINCHESTER";
-	allweaponmap[30] = "WEAPON_REVOLVER_CATTLEMAN";
-	allweaponmap[31] = "WEAPON_REVOLVER_CATTLEMAN_JOHN";
-	allweaponmap[32] = "WEAPON_REVOLVER_CATTLEMAN_MEXICAN";
-	allweaponmap[33] = "WEAPON_REVOLVER_CATTLEMAN_PIG";
-	allweaponmap[34] = "WEAPON_REVOLVER_DOUBLEACTION";
-	allweaponmap[35] = "WEAPON_REVOLVER_DOUBLEACTION_EXOTIC";
-	allweaponmap[36] = "WEAPON_REVOLVER_DOUBLEACTION_GAMBLER";
-	allweaponmap[37] = "WEAPON_REVOLVER_DOUBLEACTION_MICAH";
-	allweaponmap[38] = "WEAPON_REVOLVER_LEMAT";
-	allweaponmap[39] = "WEAPON_REVOLVER_SCHOFIELD";
-	allweaponmap[40] = "WEAPON_REVOLVER_SCHOFIELD_GOLDEN";
-	allweaponmap[41] = "WEAPON_REVOLVER_SCHOFIELD_CALLOWAY";
-	allweaponmap[42] = "WEAPON_RIFLE_BOLTACTION";
-	allweaponmap[43] = "WEAPON_SNIPERRIFLE_CARCANO";
-	allweaponmap[44] = "WEAPON_SNIPERRIFLE_ROLLINGBLOCK";
-	allweaponmap[45] = "WEAPON_SNIPERRIFLE_ROLLINGBLOCK_EXOTIC";
-	allweaponmap[46] = "WEAPON_RIFLE_SPRINGFIELD";
-	allweaponmap[47] = "WEAPON_SHOTGUN_DOUBLEBARREL";
-	allweaponmap[48] = "WEAPON_SHOTGUN_DOUBLEBARREL_EXOTIC";
-	allweaponmap[49] = "WEAPON_SHOTGUN_PUMP";
-	allweaponmap[50] = "WEAPON_SHOTGUN_REPEATING";
-	allweaponmap[51] = "WEAPON_SHOTGUN_SAWEDOFF";
-	allweaponmap[52] = "WEAPON_SHOTGUN_SEMIAUTO";
-	allweaponmap[53] = "WEAPON_BOW";
-	allweaponmap[54] = "WEAPON_THROWN_DYNAMITE";
-	allweaponmap[55] = "WEAPON_REVOLVER_NAVY";
+	std::array<char*, 56> allweaponmap = SetUpAllWeaponMap();
 
 	//container for special weapons (affected by special weapon damage modifier)
-	std::map<int, Hash> weaponmap;
-	weaponmap[0] = GAMEPLAY::GET_HASH_KEY("WEAPON_THROWN_DYNAMITE");
-	weaponmap[1] = GAMEPLAY::GET_HASH_KEY("WEAPON_THROWN_TOMAHAWK_ANCIENT");
-	weaponmap[2] = GAMEPLAY::GET_HASH_KEY("WEAPON_THROWN_TOMAHAWK");
-	weaponmap[3] = GAMEPLAY::GET_HASH_KEY("WEAPON_SHOTGUN_DOUBLEBARREL");
-	weaponmap[4] = GAMEPLAY::GET_HASH_KEY("WEAPON_SHOTGUN_DOUBLEBARREL_EXOTIC");
-	weaponmap[5] = GAMEPLAY::GET_HASH_KEY("WEAPON_SHOTGUN_PUMP");
-	weaponmap[6] = GAMEPLAY::GET_HASH_KEY("WEAPON_SHOTGUN_REPEATING");
-	weaponmap[7] = GAMEPLAY::GET_HASH_KEY("WEAPON_SHOTGUN_SAWEDOFF");
-	weaponmap[8] = GAMEPLAY::GET_HASH_KEY("WEAPON_SHOTGUN_SEMIAUTO");
-	weaponmap[9] = GAMEPLAY::GET_HASH_KEY("WEAPON_SNIPERRIFLE_CARCANO");
-	weaponmap[10] = GAMEPLAY::GET_HASH_KEY("WEAPON_SNIPERRIFLE_ROLLINGBLOCK");
-	weaponmap[11] = GAMEPLAY::GET_HASH_KEY("WEAPON_SNIPERRIFLE_ROLLINGBLOCK_EXOTIC");
-	weaponmap[12] = GAMEPLAY::GET_HASH_KEY("WEAPON_RIFLE_BOLTACTION");
-	weaponmap[13] = GAMEPLAY::GET_HASH_KEY("WEAPON_RIFLE_SPRINGFIELD");
+	std::array<Hash, 14> specialweaponmap = SetUpSpecialWeaponMap();
 
 	//container for special ammo (affected by special weapon damage modifier)
-	std::map<Hash, Hash> ammomap;
-	ammomap[GAMEPLAY::GET_HASH_KEY("AMMO_ARROW_DYNAMITE")] = GAMEPLAY::GET_HASH_KEY("WEAPON_BOW");
-	ammomap[GAMEPLAY::GET_HASH_KEY("AMMO_ARROW_IMPROVED")] = GAMEPLAY::GET_HASH_KEY("WEAPON_BOW");
+	std::map<Hash, Hash> specialammomap = SetUpSpecialAmmoMap();
 
-	//container for knives
-	vector<char*> knives;
+	//container for knives (affected by knife damage modifier)
+	std::array<char*, 7> knives = SetUpKnivesMap();
 
-	knives.push_back("WEAPON_MELEE_KNIFE_JOHN");
-	knives.push_back("WEAPON_MELEE_KNIFE");
-	knives.push_back("WEAPON_MELEE_KNIFE_MINER");
-	knives.push_back("WEAPON_MELEE_KNIFE_CIVIL_WAR");
-	knives.push_back("WEAPON_MELEE_KNIFE_BEAR");
-	knives.push_back("WEAPON_MELEE_KNIFE_VAMPIRE");
-	knives.push_back("WEAPON_MELEE_MACHETE");
-
-	//container for bones
-	vector<int> legbones, armbones, torsobones, headbones, neckbones, torsobonesbleeding;
-
-	legbones.push_back(6884); //SKEL_R_Thigh
-	legbones.push_back(65478); //SKEL_L_Thigh
-	legbones.push_back(55120); //SKEL_L_CALF
-	legbones.push_back(33646); //unknown leg bone
-	legbones.push_back(43312); //SKEL_R_Calf
-	legbones.push_back(45454); //SKEL_L_Foot
-
-	armbones.push_back(34606); //SKEL_L_Hand
-	armbones.push_back(22798); //SKEL_R_Hand
-	armbones.push_back(54187); //SKEL_R_Forearm
-	armbones.push_back(53675); //SKEL_L_Forearm
-	armbones.push_back(41357); //SKEL_L_Finger32
-	armbones.push_back(41341); //SKEL_L_Finger32
-	armbones.push_back(41405); //SKEL_L_Finger12
-	armbones.push_back(41326); //SKEL_L_Finger12
-	armbones.push_back(41325); //SKEL_L_Finger12
-	armbones.push_back(35876); //SKEL_L_Finger41
-	armbones.push_back(16829); //SKEL_L_Finger32
-	armbones.push_back(16781); //SKEL_R_Finger32
-	armbones.push_back(16765); //SKEL_L_Finger32
-	armbones.push_back(16749); //SKEL_R_Finger12
-	armbones.push_back(11300); //SKEL_R_Finger41
-	armbones.push_back(37873); //Left upper arm (name unknown)
-	armbones.push_back(46065); //right upper arm (name unknown)
-
-	torsobones.push_back(14410); //unknown torso bone
-	torsobones.push_back(14411); //SKEL_Spine1
-	torsobones.push_back(14412); //SKEL_Spine2
-	torsobones.push_back(14413); //SKEL_Spine3
-	torsobones.push_back(14414); //SKEL_Spine4
-	torsobones.push_back(14415); //SKEL_Spine5
+	//container for bones (needed for bleeding and locational damage)
+	std::array<int, 6> legbones = SetUpLegBonesMap(), torsobones = SetUpTorsoBonesMap(), neckbones = SetUpNeckBonesMap();
+	std::array<int, 17> armbones = SetUpArmBonesMap();
+	std::array<int, 1> headbones = SetUpHeadBonesMap();
+	std::array<int, 14> torsobonesbleeding = SetUpTorsoBonesBleedingMap();	
 	
-	headbones.push_back(21030); //SKEL_Head
+	//loop counter (increments each script loop)
+	int loopcounter = 0;
 
-	neckbones.push_back(14283); //SKEL_Neck0
-	neckbones.push_back(14284); //SKEL_Neck1
-	neckbones.push_back(14285); //SKEL_Neck2
-	neckbones.push_back(14286); //SKEL_Neck3
-	neckbones.push_back(14287); //SKEL_Neck4
-	neckbones.push_back(14288); //SKEL_Neck5
-
-	torsobonesbleeding.push_back(14410); //unknown torso bone
-	torsobonesbleeding.push_back(14411); //SKEL_Spine1
-	torsobonesbleeding.push_back(14412); //SKEL_Spine2
-	torsobonesbleeding.push_back(14413); //SKEL_Spine3
-	torsobonesbleeding.push_back(14414); //SKEL_Spine4
-	torsobonesbleeding.push_back(14415); //SKEL_Spine5
-	torsobonesbleeding.push_back(30226); //left shoulder
-	torsobonesbleeding.push_back(54802); //right shoulder
-	torsobonesbleeding.push_back(14283); //SKEL_Neck0
-	torsobonesbleeding.push_back(14284); //SKEL_Neck1
-	torsobonesbleeding.push_back(14285); //SKEL_Neck2
-	torsobonesbleeding.push_back(14286); //SKEL_Neck3
-	torsobonesbleeding.push_back(14287); //SKEL_Neck4
-	torsobonesbleeding.push_back(14288); //SKEL_Neck5
-	
-	//fire audio interval
-	int fireaudiointerval = 4000;
+	//fire audio interval (needed so pain audio from NPCs on fire does not loop)
+	const int fireaudiointerval = 4000;
 
 	//timer for core depletion
 	int coredepletiontimer = GAMEPLAY::GET_GAME_TIMER() + ini_coredepletiontime;
@@ -642,13 +387,13 @@ void main()
 	int combatcounter = 0;
 
 	//knockdown time (how long NPC is ragdolled)
-	int kotime = 20000;
+	const int kotime = 20000;
 
 	//variables for downed NPCs (used when deciding if NPCs flee out of fear) 
 	int npcdowncounter = 0;
 	int npcdowntimeintervallx = 0;
 
-	//values for drowning
+	//values for drowning (needed so NPCs with high health (if someone changed the ini values) still drown properly)
 	int drowningticker = 0;
 	int drowningintervall = 20000;
 	int drowningdamagetime = 8;
@@ -667,7 +412,7 @@ void main()
 	int msgTimeFriendlyFire = 0;
 	bool ffchangeexecuted = false;
 
-	//killing wounded settings
+	//longer bleedout settings
 	bool longerbleedoutbool = false;
 	int msgTimeLongerBleedout = 0;
 	int longerbleedingvalue = ini_longerbleedingvalue;
@@ -675,42 +420,102 @@ void main()
 	int bleedingvaluetemp = ini_bleedingvalue;
 	int bleedingchancetemp = ini_bleedingchance_dying2;
 	
-	//task id
-	char c[60], d[60], e[60], f[60], g[60], h[60], j[60];
-	std::string text = "NPC Health: ", textpm = "Hostile NPC Count: ", textstat = "Ped Status: ", ttext = "NPC Tasks: ", mtext = "NPC Model: ", torso = "Max HP/Use Max HP: ", weapondam = "Damaged by weapon: ", legshit = "Legs hit/Torso Hit: ", dyingbool = "DS enabled: ", dshistory = "DS visited (1, 2, 3): ", lastdambone = "Last dmg bone/StoryNPC: ";
+	//variables for printing on screen text (if the corresponding ini values are set)
+	bool drawStuffOnScreen = false;
+	if (ini_shownpchealth != 0 || ini_showpedmodel != 0 || ini_showpedtasks != 0) drawStuffOnScreen = true;
+	std::array<char, 60> c, d, e, f, g, h, j;
+	std::unordered_map<char, std::array<char, 60>*> charsets;
+	charsets['c'] = &c;
+	charsets['d'] = &d;
+	charsets['e'] = &e;
+	charsets['f'] = &f;
+	charsets['g'] = &g;
+	charsets['h'] = &h;
+	charsets['j'] = &j;
+	//std::string text = "NPC Health: ", textpm = "Hostile NPC Count: ", textstat = "Ped Status: ", ttext = "NPC Tasks: ", mtext = "NPC Model: ", torso = "Max HP/Use Max HP: ", weapondam = "Damaged by weapon: ", legshit = "Legs hit/Torso Hit: ", dyingbool = "DS enabled: ", dshistory = "DS visited (1, 2, 3): ", lastdambone = "Last dmg bone/StoryNPC: ";
+	std::string text, textpm, textstat, ttext, mtext, torso, weapondam, legshit, dyingbool, dshistory, lastdambone;
 	int taskid = 99999;
 	int lastbonedamaged = 0;
 	int lastbonedamagedtemp = 0;
 	Entity playerTargetyolo = PLAYER::PLAYER_PED_ID();
 	Entity playerTargetOld = playerTargetyolo;
+
+	//get player and player ped as well as the identifying hash for the lasso weapon and a variable for NPCs getting caught by it and another one for checking if player damages hogtied NPCs
+	Player player = PLAYER::PLAYER_ID();
+	Ped playerPed = PLAYER::PLAYER_PED_ID();
+	Hash lassoHash = GAMEPLAY::GET_HASH_KEY("WEAPON_LASSO");
+	Ped lastTarget = playerPed; //used for lasso disarming
+	Ped lastTarget2 = playerPed; //used for hogtied panicking
+	Ped lastTargetx = playerPed; //used for special hogtie fix for dying movement writhing animation
+	Ped lastTargety = playerPed; //used for NPC screaming on being attacked
+
+	//containers for storing information needed for on screen display
+	std::unordered_map<std::string, Ped*> pedInfo;
+	pedInfo["playerTargetyolo"] = &playerTargetyolo;
+	pedInfo["playerTargetOld"] = &playerTargetOld;
+	pedInfo["playerPed"] = &playerPed;
+
+	std::unordered_map<std::string, std::string*> textInfo;
+	textInfo["text"] = &text;
+	textInfo["textpm"] = &textpm;
+	textInfo["textstat"] = &textstat;
+	textInfo["ttext"] = &ttext;
+	textInfo["mtext"] = &mtext;
+	textInfo["torso"] = &torso;
+	textInfo["weapondam"] = &weapondam;
+	textInfo["legshit"] = &legshit;
+	textInfo["dyingbool"] = &dyingbool;
+	textInfo["dshistory"] = &dshistory;
+	textInfo["lastdambone"] = &lastdambone;
+
+	std::unordered_map<std::string, int*> miscInfo;
+	miscInfo["lastbonedamaged"] = &lastbonedamaged;
+	miscInfo["lastbonedamagedtemp"] = &lastbonedamagedtemp;
+	miscInfo["combatcounter"] = &combatcounter;
+
 	
 	//main script
 	while (true)
 	{
 		//check if script is being enabled or disabled
-		if (IsKeyJustUp(toggleKey))
+		if (toggleKeyBound)
 		{
-			modScriptState = !modScriptState;
-			msgTime = GetTickCount() + 3000;
+			if (IsKeyJustUp(toggleKey))
+			{
+				modScriptState = !modScriptState;
+				msgTime = GetTickCount() + 3000;
+			}
 		}
 
-		if (IsKeyJustUp(killwoundedkey))
+		//check if kill wounded function is being enabled or disabled
+		if (killWoundedKeyBound)
 		{
-			killwoundedbool = !killwoundedbool;
-			msgTimeKillWounded = GetTickCount() + 3000;
+			if (IsKeyJustUp(killwoundedkey))
+			{
+				killwoundedbool = !killwoundedbool;
+				msgTimeKillWounded = GetTickCount() + 3000;
+			}
 		}
 
-		if (IsKeyJustUp(longerbleedoutkey))
+		//check if longer bleedout function is being enabled or disabled
+		if (longerBleedoutKeyBound)
 		{
-			longerbleedoutbool = !longerbleedoutbool;
-			msgTimeLongerBleedout = GetTickCount() + 3000;
+			if (IsKeyJustUp(longerbleedoutkey))
+			{
+				longerbleedoutbool = !longerbleedoutbool;
+				msgTimeLongerBleedout = GetTickCount() + 3000;
+			}
 		}
 
-		if (IsKeyJustUp(friendlyfirekey))
+		//check if friendly fire function is being enabled or disabled
+		if (friendlyFireKeyBound)
 		{
-			friendlyfirebool = !friendlyfirebool;
-			msgTimeFriendlyFire = GetTickCount() + 3000;
-			if (!friendlyfirebool) ffchangeexecuted = false;
+			if (IsKeyJustUp(friendlyfirekey))
+			{
+				friendlyfirebool = !friendlyfirebool;
+				msgTimeFriendlyFire = GetTickCount() + 3000;
+				if (!friendlyfirebool) ffchangeexecuted = false;
+			}
 		}
 
 		//get if a mission is currently running
@@ -726,21 +531,12 @@ void main()
 		//if script enabled, start doing your thing
 		if (modScriptState && !(missionactive && ini_disablemodinmissions == 1))
 		{			
-			//get player and player ped as well as the identifying hash for the lasso weapon and a variable for NPCs getting caught by it and another one for checking if player damages hogtied NPCs
-			Player player = PLAYER::PLAYER_ID();
-			Ped playerPed = PLAYER::PLAYER_PED_ID();
-			Hash lassoHash = GAMEPLAY::GET_HASH_KEY("WEAPON_LASSO");
-			Ped lastTarget = playerPed; //used for lasso disarming
-			Ped lastTarget2 = playerPed; //used for hogtied panicking
-			Ped lastTargetx = playerPed; //used for special hogtie fix for dying movement writhing animation
-			Ped lastTargety = playerPed; //used for NPC screaming on being attacked
-			
-			//setting the longer bleeding, firendly fire and killing wounded overrides
+			//setting the longer bleeding, firendly fire and killing wounded ini overwrites
 			if (ini_alwaysbleedoutlonger == 1) longerbleedoutbool = true;
 			if (ini_alwayskillwounded == 1) killwoundedbool = true;
 			if (ini_friendlyfire == 1) friendlyfirebool = true;
 
-			//set longer bleedout if enabled
+			//configures longer bleedout function, if enabled (depending on mission status and ini settings)
 			bool ismissionandbleedoutshouldbedisabled = false;
 			
 			if (ini_longerbleedoutdisabledinmissions == 1 && missionactive) {
@@ -818,7 +614,7 @@ void main()
 				}
 			}
 
-			//core depletion after death
+			//core depletion and money loss after death
 			if (ini_coredepletionafterdeath == 1 || ini_moneylossafterdeath == 1)
 			{
 				if (PLAYER::IS_PLAYER_DEAD(player))
@@ -884,28 +680,31 @@ void main()
 			if (ini_npcweaponmodifier != 0) PED::SET_AI_WEAPON_DAMAGE_MODIFIER(ini_npcweaponmodifier);
 
 			//get all peds near player (those will be affected by the script)
-			const int ARR_SIZE = 150;
+			const int ARR_SIZE = 256;
 			Ped peds[ARR_SIZE];
-			//int count = worldGetAllPeds(peds, ARR_SIZE);
 			int count = worldGetAllPeds(peds, ini_modeffectrange);
 			
 			if (ini_disableitemglow != 0) //disable item glow
 			{
-				const int pickupsRange = 1024, objectsRange = 1024;
-				Object pickups[pickupsRange], objects[objectsRange];
+				const int pickupsRange = 128;
+				//objectsRange = 128;
+				Object pickups[pickupsRange];
+				//objects[objectsRange];
 
 				int pickupcount = worldGetAllPickups(pickups, pickupsRange);
-				int objectcount = worldGetAllObjects(objects, objectsRange);
+				//int objectcount = worldGetAllObjects(objects, objectsRange);
 
 				for (int i = 0; i < pickupcount; i++)
 				{
 					GRAPHICS::x_0x50C14328119E1DD1(pickups[i], true);
 				}
 
+				/*
 				for (int i = 0; i < objectcount; i++)
 				{
 					GRAPHICS::x_0x50C14328119E1DD1(objects[i], true);
 				}
+				*/
 			}
 
 			//filling container for peds and giving them default values
@@ -915,171 +714,7 @@ void main()
 				{
 					PedAttributes p;
 					
-					/*status:
-					0 = default
-					1 = friendly story character
-					2 = other story character
-					3 = none of the above
-					*/
-					p.isstorychar = 0;
-					
-					/*status:
-					0 = default
-					1 = both legs crippled
-					2 = both legs crippled & will survive burning
-					3 = default & will survive burning
-					4 = is/was burning and should survive
-					5 = is burning and should not survive
-					6 = left leg crippled
-					7 = left leg crippled & will survive burning
-					8 = right leg crippled
-					9 = right leg crippled & will survive burning
-					10 = paralyzed
-					11 = paralyzed and will survive burning
-					99 = temporary status in which a prolonging of the ragdoll behavior is not wanted
-					*/
-					p.status = 0;
-
-					//status: 0 = default value
-					p.health = 0;
-
-					//status: 0 = default value, >0 = was already in dying state 3 at least once
-					p.dyingstate3entered = 0;
-
-					//status: 0 = default value, >0 = was already in dying state 2 at least once
-					p.dyingstate2entered = 0;
-
-					//status: 0 = default value, >0 = was already in dying state 1 at least once
-					p.dyingstate1entered = 0;
-
-					//status: -1 = default value, will later be filled with a game timer value to make transition into writhing animation occur after a while (looks smoother than if it is done immediately)
-					p.animtrans = -1;
-
-					//status: 0 = default value
-					p.healthds = 0;
-
-					//status: 0 = disabled, 1 = enabled
-					int randu = 0 + (std::rand() % (99 - 0 + 1));
-					if (randu < ini_dyingstatechance) p.dyingstatebool = 1;
-					else p.dyingstatebool = 0;
-
-					//gets filled with current NPC health values, so later the delta (damage done) can be computed
-					p.limbhealth = ENTITY::GET_ENTITY_HEALTH(peds[i]);
-
-					//status: 0 = has not been knocked out, 1 = has been knocked out and effects pending, 2 = has been knocked out and effects have been triggered
-					p.isknockedout = 0;
-
-					//status: 0 = do not use animation, 1 = use animation
-					int animrand = 0 + (std::rand() % (99 - 0 + 1));
-					if (animrand < ini_useanimchance) p.dsanimationused = 1;
-					else p.dsanimationused = 0;
-
-					//status: 0 = euphoria stumbing disabled, 1 = euphoria stumbling enabled
-					int randi = 0 + (std::rand() % (99 - 0 + 1));
-					if (randi < ini_euphoriastumblechance) p.euphstumblingenabled = 1;
-					else p.euphstumblingenabled = 0;
-
-					//status: 0 = default value
-					p.isfalling = 0;
-
-					//status: 0 = default value
-					p.falltime = 0;
-
-					//status: 0 = default value, 1 = to be killed
-					p.tobekilled = 0;
-
-					//status: 0 = default value, 1 = to be downed
-					p.tobedowned = 0;
-
-					//status: 0 = was not hit in the torso, 1 = was hit in the torso
-					p.torsohit = 0;
-
-					//status: 0 = default value
-					p.accuracy = 0;
-
-					//status: 0 = not down, 1 = down
-					p.isdown = 0;
-
-					//status: 0 = not dead, 1 = dead
-					p.isdead = 0;
-
-					//status: 0 = has not reacted to friends dying, 1 = has reacted to friends dying (hands up or cowering), 2 = has reacted to friends dying (fleeing), 9 = fleeing after status 1
-					p.hasreacted = 0;
-
-					//status: false = bleeding will apply, true = the ped won't bleed
-					p.nobleeding = false;
-
-					//status: 0 = has been on a mount
-					p.lasttimeonmount = 0;
-					
-					p.handsup = 0;
-
-					p.firsttimehandsup = 0;
-
-					//status: 0 = no stumbling time calculated yet
-					p.stumblingtime = 0;
-
-					p.headvecdelta.x = 0;
-					p.headvecdelta.y = 0;
-					p.headvecdelta.z = 0;
-
-					p.headvectime = 0;
-
-					p.lastfearaudio = 0;
-
-					p.rightleghitcounter = 0;
-
-					p.leftleghitcounter = 0;
-
-					p.legsdamageddowntime = 0;
-
-					p.legsdownsurvivaltimer = 0;
-
-					p.fireaudiotime = 0;
-
-					p.fireaudiosample = 0;
-
-					p.arteryshot = false;
-
-					p.wasaimedat = false;
-
-					p.hasbeendamagedbyweapon = false;
-
-					p.ishanging = false;
-
-					p.hangingtime = 0;
-
-					p.shotbyplayer = 0;
-
-					p.wasnotaloneincombat = false;
-
-					p.isincombatwithplayer = false;
-
-					p.isarmed = false;
-
-					p.wasdisarmed = false;
-
-					p.movementstyle = "";
-
-					p.blipset = 0;
-
-					p.dismount = 0;
-
-					p.disarmingstop = false;
-
-					if (PED::GET_PED_RELATIONSHIP_GROUP_HASH(peds[i]) == GAMEPLAY::GET_HASH_KEY("REL_COP"))
-					{
-						p.ispolice = true;
-						int dismrand = ini_policedismountdistancemin + (std::rand() % (ini_policedismountdistancemax - ini_policedismountdistancemin + 1));
-						p.policedismountdistance = dismrand;
-					}
-					else p.ispolice = false;
-
-					p.maxhealth = 0;
-
-					p.usemaxhealth = 0;
-
-					p.isinvehicle = 0;
+					SetUpPed(&peds[i], &p, &iniValues, &friendlyStoryNPCs, &otherStoryNPCs);
 
 					pedmap[peds[i]] = p;
 				}
@@ -1094,7 +729,7 @@ void main()
 //______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
 
-			//set damage modifiers
+			//set damage modifiers depending on the current weapon and target
 			if (PLAYER::IS_PLAYER_TARGETTING_ANYTHING(player) || PLAYER::IS_PLAYER_FREE_AIMING(player))
 			{
 				//knife bool for checking if knife is being used
@@ -1103,52 +738,39 @@ void main()
 				bool specialweapon = false;
 				//special ammo bool for checking if special ammo is being used
 				bool specialammo = false;
-				std::map<int, Hash>::iterator w_it = weaponmap.begin();
-				std::map<Hash, Hash>::iterator a_it = ammomap.begin();
+				std::map<Hash, Hash>::iterator a_it = specialammomap.begin();
 				
 				//check if knife is used
-				for (vector<char*>::size_type it = 0; it != knives.size(); it++)
+				for(char*& k: knives)
 				{
-					if (WEAPON::HAS_PED_GOT_WEAPON(playerPed, GAMEPLAY::GET_HASH_KEY(knives[it]), 0, 0))
+					Hash weaponhash;
+					if (WEAPON::GET_CURRENT_PED_WEAPON(playerPed, &weaponhash, false, 0, false))
 					{
-						Hash weaponhash;
-						if (WEAPON::GET_CURRENT_PED_WEAPON(playerPed, &weaponhash, false, 0, false))
-						{
-							if (weaponhash == GAMEPLAY::GET_HASH_KEY(knives[it])) knife = true;
-						}
+						if (weaponhash == GAMEPLAY::GET_HASH_KEY(k)) knife = true;
 					}
 				}
 
 				//check if special weapon is used
-				while (w_it != weaponmap.end())
+				for(Hash& w: specialweaponmap)
 				{
-					int index = w_it->first;
-					Hash weapon = w_it->second;
-					if (WEAPON::HAS_PED_GOT_WEAPON(playerPed, weapon, 0, 0))
+					Hash weaponhash;
+					if (WEAPON::GET_CURRENT_PED_WEAPON(playerPed, &weaponhash, false, 0, false))
 					{
-						Hash weaponhash;
-						if (WEAPON::GET_CURRENT_PED_WEAPON(playerPed, &weaponhash, false, 0, false))
-						{
-							if (weaponhash == weapon) specialweapon = true;
-						}
+						if (weaponhash == w) specialweapon = true;
 					}
-					w_it++;
 				}
 
 				//check if special ammo is used
-				while (a_it != ammomap.end())
+				while (a_it != specialammomap.end())
 				{
 					Hash ammo = a_it->first;
 					Hash weapon = a_it->second;
-					if (WEAPON::HAS_PED_GOT_WEAPON(playerPed, weapon, 0, 0))
+					Hash weaponhash;
+					if (WEAPON::GET_CURRENT_PED_WEAPON(playerPed, &weaponhash, false, 0, false))
 					{
-						Hash weaponhash;
-						if (WEAPON::GET_CURRENT_PED_WEAPON(playerPed, &weaponhash, false, 0, false))
+						if (weaponhash == weapon)
 						{
-							if (weaponhash == weapon)
-							{
-								if (WEAPON::GET_PED_AMMO_TYPE_FROM_WEAPON(playerPed, weapon) == ammo) specialammo = true;
-							}
+							if (WEAPON::GET_PED_AMMO_TYPE_FROM_WEAPON(playerPed, weapon) == ammo) specialammo = true;
 						}
 					}
 					a_it++;
@@ -1182,13 +804,8 @@ void main()
 			//iterate through NPCs, check them for stuff and apply stuff (main function of this mod)
 			for (int i = 0; i < count; i++)
 			{
-				//bool for BodyGuardSpawner Mod
-				bool npcisfrombodyguardspawner;
-
-				if (ini_excludebodyguardmodnpcs == 1 && DECORATOR::DECOR_EXIST_ON(peds[i], "BodyguardSpawner")) npcisfrombodyguardspawner = true;
-				else npcisfrombodyguardspawner = false;
-
-				if (!npcisfrombodyguardspawner)
+				//excludes NPCs from the "Bodyguard Spawner" mod, if set in the ini
+				if (!pedmap[peds[i]].isFromBodyguardSpawner)
 				{
 					//remove blip if it still exists
 					if (ini_blipfords == 1)
@@ -1207,285 +824,8 @@ void main()
 						}
 					}
 
-					//show ped health
-					if (ini_shownpchealth == 1)
-					{
-						std::strcpy(c, text.c_str());
-						std::strcpy(d, torso.c_str());
-						std::strcpy(e, weapondam.c_str());
-						std::strcpy(f, legshit.c_str());
-						std::strcpy(g, dyingbool.c_str());
-						std::strcpy(h, dshistory.c_str());
-						std::strcpy(j, lastdambone.c_str());
-						DrawText(0.55, 0.05, c);
-						DrawText(0.55, 0.18, j);
-						DrawText(0.55, 0.31, e);
-						DrawText(0.55, 0.44, d);
-						DrawText(0.55, 0.57, f);
-						DrawText(0.55, 0.70, g);
-						DrawText(0.55, 0.83, h);
-
-						if (WEAPON::IS_PED_WEAPON_READY_TO_SHOOT(playerPed))
-						{
-							Entity playerTargetTemp = playerTargetyolo;
-							if (PLAYER::GET_ENTITY_PLAYER_IS_FREE_AIMING_AT(player, &playerTargetyolo))
-							{
-								playerTargetOld = playerTargetTemp;
-							}
-						}
-						if (playerTargetOld != playerPed && playerTargetOld != playerTargetyolo)
-						{
-							text = "NPC Health: ";
-							std::strcpy(c, text.c_str());
-						}
-						if (playerTargetyolo != playerPed)
-						{
-							PED::GET_PED_LAST_DAMAGE_BONE(playerTargetyolo, &lastbonedamagedtemp);
-							if (lastbonedamagedtemp != 0) lastbonedamaged = lastbonedamagedtemp;
-
-							text = "NPC Health: " + std::to_string(ENTITY::GET_ENTITY_HEALTH(playerTargetyolo));
-							torso = "Max HP/Use Max HP: " + std::to_string(pedmap[playerTargetyolo].maxhealth) +" / " + std::to_string(pedmap[playerTargetyolo].usemaxhealth);
-							weapondam = "Damaged by weapon: " + std::to_string(pedmap[playerTargetyolo].hasbeendamagedbyweapon);
-							legshit = "Legs hit/Torso Hit: " + std::to_string(pedmap[playerTargetyolo].legsdownsurvivaltimer) + " / " + std::to_string(pedmap[playerTargetyolo].torsohit);
-							dyingbool = "DS enabled: " + std::to_string(pedmap[playerTargetyolo].dyingstatebool);
-							dshistory = "DS visited (1, 2, 3): " + std::to_string(pedmap[playerTargetyolo].dyingstate1entered) + ", " + std::to_string(pedmap[playerTargetyolo].dyingstate2entered) + ", " + std::to_string(pedmap[playerTargetyolo].dyingstate3entered);
-							lastdambone = "Last dmg bone/StoryNPC: " + std::to_string(lastbonedamaged) + " / " + std::to_string(pedmap[playerTargetyolo].isstorychar);
-							std::strcpy(c, text.c_str());
-							std::strcpy(d, torso.c_str());
-							std::strcpy(e, weapondam.c_str());
-							std::strcpy(f, legshit.c_str());
-							std::strcpy(g, dyingbool.c_str());
-							std::strcpy(h, dshistory.c_str());
-							std::strcpy(j, lastdambone.c_str());
-							DrawText(0.55, 0.05, c);
-							DrawText(0.55, 0.18, j);
-							DrawText(0.55, 0.31, e);
-							DrawText(0.55, 0.44, d);
-							DrawText(0.55, 0.57, f);
-							DrawText(0.55, 0.70, g);
-							DrawText(0.55, 0.83, h);
-						}
-					}
-
-					if (ini_shownpchealth == 2)
-					{
-						std::strcpy(c, text.c_str());
-						std::strcpy(d, torso.c_str());
-						std::strcpy(e, textstat.c_str());
-						std::strcpy(f, legshit.c_str());
-						std::strcpy(g, dyingbool.c_str());
-						std::strcpy(h, dshistory.c_str());
-						std::strcpy(j, textpm.c_str());
-						DrawText(0.55, 0.05, c);
-						DrawText(0.55, 0.15, j);
-						DrawText(0.55, 0.25, e);
-						DrawText(0.55, 0.35, d);
-						DrawText(0.55, 0.45, f);
-						DrawText(0.55, 0.55, g);
-						DrawText(0.55, 0.65, h);
-
-						if (WEAPON::IS_PED_WEAPON_READY_TO_SHOOT(playerPed))
-						{
-							Entity playerTargetTemp = playerTargetyolo;
-							if (PLAYER::GET_ENTITY_PLAYER_IS_FREE_AIMING_AT(player, &playerTargetyolo))
-							{
-								playerTargetOld = playerTargetTemp;
-							}
-						}
-						if (playerTargetOld != playerPed && playerTargetOld != playerTargetyolo)
-						{
-							text = "NPC Health: ";
-							std::strcpy(c, text.c_str());
-						}
-						if (playerTargetyolo != playerPed)
-						{
-							PED::GET_PED_LAST_DAMAGE_BONE(playerTargetyolo, &lastbonedamagedtemp);
-							if (lastbonedamagedtemp != 0) lastbonedamaged = lastbonedamagedtemp;
-
-							text = "NPC Health: " + std::to_string(ENTITY::GET_ENTITY_HEALTH(playerTargetyolo));
-							torso = "Torso hit: " + std::to_string(pedmap[playerTargetyolo].torsohit);
-							legshit = "Legs hit: " + std::to_string(pedmap[playerTargetyolo].legsdownsurvivaltimer);
-							dyingbool = "DS enabled: " + std::to_string(pedmap[playerTargetyolo].dyingstatebool);
-							dshistory = "DS visited (1, 2, 3): " + std::to_string(pedmap[playerTargetyolo].dyingstate1entered) + ", " + std::to_string(pedmap[playerTargetyolo].dyingstate2entered) + ", " + std::to_string(pedmap[playerTargetyolo].dyingstate3entered);
-							textpm = "Hostile NPC Count: " + std::to_string(combatcounter);
-							textstat = "NPC Status: " + std::to_string(pedmap[playerTargetyolo].status);
-							std::strcpy(c, text.c_str());
-							std::strcpy(d, torso.c_str());
-							std::strcpy(e, textstat.c_str());
-							std::strcpy(f, legshit.c_str());
-							std::strcpy(g, dyingbool.c_str());
-							std::strcpy(h, dshistory.c_str());
-							std::strcpy(j, textpm.c_str());
-							DrawText(0.55, 0.05, c);
-							DrawText(0.55, 0.15, j);
-							DrawText(0.55, 0.25, e);
-							DrawText(0.55, 0.35, d);
-							DrawText(0.55, 0.45, f);
-							DrawText(0.55, 0.55, g);
-							DrawText(0.55, 0.65, h);
-						}
-					}
-
-					//show ped model
-					if (ini_showpedmodel == 1)
-					{
-
-						DrawText(0.5, 0.15, c);
-
-						if (WEAPON::IS_PED_WEAPON_READY_TO_SHOOT(playerPed))
-						{
-							Entity playerTargetTemp = playerTargetyolo;
-							if (PLAYER::GET_ENTITY_PLAYER_IS_FREE_AIMING_AT(player, &playerTargetyolo))
-							{
-								playerTargetOld = playerTargetTemp;
-							}
-						}
-						if (playerTargetOld != playerPed && playerTargetOld != playerTargetyolo)
-						{
-							mtext = "NPC Model: ";
-							std::strcpy(c, mtext.c_str());
-						}
-						if (playerTargetyolo != playerPed)
-						{
-							mtext = "NPC Model: " + std::to_string(ENTITY::GET_ENTITY_MODEL(playerTargetyolo));
-							std::strcpy(c, mtext.c_str());
-							DrawText(0.5, 0.15, c);
-						}
-					}
-
-					//show task ids
-					if (ini_showpedtasks == 1)
-					{
-						std::strcpy(c, ttext.c_str());
-						DrawText(0.5, 0.15, c);
-
-						if (WEAPON::IS_PED_WEAPON_READY_TO_SHOOT(playerPed))
-						{
-							Entity playerTargetTemp = playerTargetyolo;
-							if (PLAYER::GET_ENTITY_PLAYER_IS_FREE_AIMING_AT(player, &playerTargetyolo))
-							{
-								playerTargetOld = playerTargetTemp;
-							}
-						}
-						if (playerTargetOld != playerPed && playerTargetOld != playerTargetyolo)
-						{
-							ttext = "NPC Tasks: ";
-							std::strcpy(c, ttext.c_str());
-						}
-						if (playerTargetyolo != playerPed)
-						{
-							for (int g = 0; g < 999; g++)
-							{
-								if (g != 582 && g != 594 && AI::GET_IS_TASK_ACTIVE(playerTargetyolo, g))
-								{
-									if (ttext.find("," + std::to_string(g) + ",") == string::npos)
-									{
-										if (ttext == "NPC Tasks: ") ttext += std::to_string(g);
-										else ttext += "," + std::to_string(g);
-										std::strcpy(c, ttext.c_str());
-										DrawText(0.5, 0.15, c);
-									}
-								}
-							}
-						}
-					}
-
-
-					//checking if current NPC is a story character and calculate max health (if its used is decided elsewhere)
-					if (pedmap[peds[i]].isstorychar == 0) {
-						int charstat = isPedStoryChar(peds[i]);
-						int maxhealth;
-						int minhealth;
-						if (charstat == 1)
-						{
-							minhealth = ini_friendlystorypedhealthmin;
-							maxhealth = ini_friendlystorypedhealthmax;
-						}
-						else if (charstat == 2)
-						{
-							minhealth = ini_otherstorypedhealthmin;
-							maxhealth = ini_otherstorypedhealthmax;
-						}
-						else
-						{
-							if (pedmap[peds[i]].ispolice)
-							{
-								minhealth = ini_lawpedhealthmin;
-								maxhealth = ini_lawpedhealthmax;
-							}
-							else
-							{
-								minhealth = ini_pedhealthmin;
-								maxhealth = ini_pedhealthmax;
-							}
-						}
-
-						pedmap[peds[i]].isstorychar = charstat;
-
-						if (pedmap[peds[i]].maxhealth == 0)
-						{
-							if (minhealth > 0 && maxhealth > 0) {
-								pedmap[peds[i]].maxhealth = minhealth + (std::rand() % (maxhealth - minhealth + 1));
-							}
-							else {
-								pedmap[peds[i]].maxhealth = ENTITY::GET_ENTITY_MAX_HEALTH(peds[i], false);
-							}
-						}
-					}
-
-					//set health of story characters, if set in the ini
-					//set if story characters are affected by the mod
-					if (pedmap[peds[i]].isstorychar == 1)
-					{
-						if (ini_excludefriendlystorynpcs != 1) pedmap[peds[i]].isstorychar = 3;
-
-						if (pedmap[peds[i]].usemaxhealth == 0)
-						{
-							if (ini_friendlystorypedhealthmin > 0 && ini_friendlystorypedhealthmax > 0)
-							{
-								pedmap[peds[i]].usemaxhealth = 2;
-								if (PED::GET_PED_MAX_HEALTH(peds[i]) != pedmap[peds[i]].maxhealth)
-								{
-									PED::SET_PED_MAX_HEALTH(peds[i], pedmap[peds[i]].maxhealth);
-									ENTITY::SET_ENTITY_HEALTH(peds[i], pedmap[peds[i]].maxhealth, 0);
-								}
-							}
-						}
-					}
-					else if (pedmap[peds[i]].isstorychar == 2)
-					{
-						if (ini_excludeotherstorynpcs != 1) pedmap[peds[i]].isstorychar = 3;
-
-						if (pedmap[peds[i]].usemaxhealth == 0)
-						{
-							if (ini_otherstorypedhealthmin > 0 && ini_otherstorypedhealthmax > 0)
-							{
-								pedmap[peds[i]].usemaxhealth = 2;
-								if (PED::GET_PED_MAX_HEALTH(peds[i]) != pedmap[peds[i]].maxhealth)
-								{
-									PED::SET_PED_MAX_HEALTH(peds[i], pedmap[peds[i]].maxhealth);
-									ENTITY::SET_ENTITY_HEALTH(peds[i], pedmap[peds[i]].maxhealth, 0);
-								}
-							}
-						}
-					}
-					else if (pedmap[peds[i]].ispolice)
-					{
-						if (pedmap[peds[i]].usemaxhealth == 0)
-						{
-							if (ini_lawpedhealthmin > 0 && ini_lawpedhealthmax > 0)
-							{
-								pedmap[peds[i]].usemaxhealth = 2;
-								if (PED::GET_PED_MAX_HEALTH(peds[i]) != pedmap[peds[i]].maxhealth)
-								{
-									PED::SET_PED_MAX_HEALTH(peds[i], pedmap[peds[i]].maxhealth);
-									ENTITY::SET_ENTITY_HEALTH(peds[i], pedmap[peds[i]].maxhealth, 0);
-								}
-							}
-						}
-					}
-					else pedmap[peds[i]].usemaxhealth = 1;
-
+					//drawing on screen information, if set in the ini
+					if (drawStuffOnScreen) DrawStatsOnScreen(loopcounter, &iniValues, &charsets, &player, &pedInfo, &textInfo, &pedmap, &miscInfo);
 
 					//friendly fire
 					if (friendlyfirebool)
@@ -1664,20 +1004,23 @@ void main()
 						if (vechead.z > groundzcoordhead + ini_zvaluehead && vechead.z < groundzcoordhead + ini_zvalueheadup) isstanding = true;
 						else isstanding = false;
 
-
 						//check if NPC has been damaged by a weapon (needed for the bleeding effect)
-						//if (WEAPON::HAS_ENTITY_BEEN_DAMAGED_BY_WEAPON(peds[i], 0, 2)) pedmap[peds[i]].hasbeendamagedbyweapon = true;
-
-						map<int, map<int, char*>>::iterator mapit;
-						for (auto mapit = allweaponmap.begin(); mapit != allweaponmap.end(); mapit++)
+						for (char*& w : allweaponmap)
 						{
-							int weapontype = mapit->first;
-							char* weaponname = mapit->second;
-							if (WEAPON::HAS_ENTITY_BEEN_DAMAGED_BY_WEAPON(peds[i], GAMEPLAY::GET_HASH_KEY(weaponname), 0)) pedmap[peds[i]].hasbeendamagedbyweapon = true;
+							if (WEAPON::HAS_ENTITY_BEEN_DAMAGED_BY_WEAPON(peds[i], GAMEPLAY::GET_HASH_KEY(w), 0)) pedmap[peds[i]].hasbeendamagedbyweapon = true;
 						}
 
 						//bool for checking if NPC is in a state in which ragdolling him doesnt break anything
-						bool pedisready = PED::IS_PED_RUNNING_RAGDOLL_TASK(peds[i]) && !isnpconfire && !PED::IS_PED_FALLING(peds[i]) && !PED::IS_PED_HANGING_ON_TO_VEHICLE(peds[i]);
+						bool pedisready;
+						
+						if (ini_nopushingdown == 0)
+						{
+							pedisready = PED::IS_PED_RUNNING_RAGDOLL_TASK(peds[i]) && !isnpconfire && !PED::IS_PED_FALLING(peds[i]) && !PED::IS_PED_HANGING_ON_TO_VEHICLE(peds[i]);
+						}
+						else
+						{
+							pedisready = !isstanding && PED::IS_PED_RUNNING_RAGDOLL_TASK(peds[i]) && !isnpconfire && !PED::IS_PED_FALLING(peds[i]) && !PED::IS_PED_HANGING_ON_TO_VEHICLE(peds[i]);
+						}
 
 						//randomizer for different pain sounds
 						int painaudio = 0 + (std::rand() % (12 - 0 + 1));
@@ -1837,7 +1180,7 @@ void main()
 						//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 						//
 						//
-						//			END: SET NPC HEALTH
+						//			END: SET NPC HEALTH, ID: PDO009
 						//
 						//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
@@ -1849,7 +1192,7 @@ void main()
 				//
 				//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
-						//if NPC has the specified health and was not burning before, check stuff and do stuff
+						//if NPC was not burning before, check stuff and do stuff (otherwise execute burning or post-burning behavior)
 						if (pedmap[peds[i]].status != 4 && pedmap[peds[i]].status != 5)
 						{
 
@@ -1882,7 +1225,7 @@ void main()
 							//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 							//
 							//
-							//			END: SET NPC ACCURACY
+							//			END: SET NPC ACCURACY, ID: PDO011
 							//
 							//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
@@ -1934,7 +1277,7 @@ void main()
 							//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 							//
 							//
-							//			END: KILL NPCs WHEN IN DYING STATE TOO LONG
+							//			END: KILL NPCs WHEN IN DYING STATE TOO LONG, ID: PDO012
 							//
 							//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
@@ -1965,7 +1308,7 @@ void main()
 							//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 							//
 							//
-							//			END: STOP BLEEDING FOR KNOCKED OUT NPCs
+							//			END: STOP BLEEDING FOR KNOCKED OUT NPCs, ID: PDO013
 							//
 							//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
@@ -1977,97 +1320,137 @@ void main()
 							//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
 							//handle the falling of an NPC (so it wont survive falls from unrealistic heights)
-							if (PED::IS_PED_FALLING(peds[i]))
+							if (ini_falltimedown > 0 || ini_falltimedeath > 0)
 							{
-								pedmap[peds[i]].isfalling = 1;
-								if (pedmap[peds[i]].falltime == 0) pedmap[peds[i]].falltime = GAMEPLAY::GET_GAME_TIMER();
-								else if (GAMEPLAY::GET_GAME_TIMER() > pedmap[peds[i]].falltime + ini_falltimedeath) pedmap[peds[i]].tobekilled = 1;
-								else if (GAMEPLAY::GET_GAME_TIMER() > pedmap[peds[i]].falltime + ini_falltimedown) pedmap[peds[i]].tobedowned = 1;
-							}
-							else
-							{
-								pedmap[peds[i]].isfalling = 0;
-								pedmap[peds[i]].falltime = 0;
-								if (pedmap[peds[i]].tobekilled == 1)
+								if (PED::IS_PED_FALLING(peds[i]))
 								{
-									if (!submerged)
+									pedmap[peds[i]].isfalling = 1;
+									if (pedmap[peds[i]].falltime == 0) pedmap[peds[i]].falltime = GAMEPLAY::GET_GAME_TIMER();
+									else if (GAMEPLAY::GET_GAME_TIMER() > pedmap[peds[i]].falltime + ini_falltimedeath) pedmap[peds[i]].tobekilled = 1;
+									else if (GAMEPLAY::GET_GAME_TIMER() > pedmap[peds[i]].falltime + ini_falltimedown) pedmap[peds[i]].tobedowned = 1;
+								}
+								else
+								{
+									pedmap[peds[i]].isfalling = 0;
+									pedmap[peds[i]].falltime = 0;
+									if (pedmap[peds[i]].tobekilled == 1)
 									{
-										ENTITY::SET_ENTITY_HEALTH(peds[i], 0, 0);
-										npchealth = 0;
+										if (!submerged)
+										{
+											ENTITY::SET_ENTITY_HEALTH(peds[i], 0, 0);
+											npchealth = 0;
+										}
+										pedmap[peds[i]].tobekilled = 0;
 									}
+									else if (pedmap[peds[i]].tobedowned == 1)
+									{
+										if (!submerged)
+										{
+											ENTITY::SET_ENTITY_HEALTH(peds[i], ini_dyingmovementthreshold - 1, 0);
+											npchealth = ini_dyingmovementthreshold - 1;
+											PED::SET_PED_TO_RAGDOLL(peds[i], 2000, 2000, 0, false, false, false);
+										}
+										pedmap[peds[i]].tobedowned = 0;
+									}
+								}
+
+								//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
+								//
+								//
+								//			BEGIN: HORSE FALLING DELTA, ID: PDO015
+								//
+								//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+								//make sure falling off horses isn't lethal all the time
+								if (PED::IS_PED_ON_MOUNT(peds[i])) pedmap[peds[i]].lasttimeonmount = GAMEPLAY::GET_GAME_TIMER() + ini_horsefallingdelta;
+								if (pedmap[peds[i]].falltime != 0 && pedmap[peds[i]].lasttimeonmount > GAMEPLAY::GET_GAME_TIMER())
+								{
+									pedmap[peds[i]].falltime = 0;
 									pedmap[peds[i]].tobekilled = 0;
 								}
-								else if (pedmap[peds[i]].tobedowned == 1)
+
+								//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
+								//
+								//
+								//			END: HORSE FALLING DELTA, ID: PDO015
+								//
+								//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+							}
+							//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
+							//
+							//
+							//			END: NPC FALLING CHECKS, ID: PDO014
+							//
+							//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+							
+							//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
+							//
+							//
+							//			BEGIN: NPC SURRENDERING, ID: PDO015x
+							//
+							//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+
+							if (!pedmap[peds[i]].ishanging && !AI::GET_IS_TASK_ACTIVE(peds[i], 11))
+							{
+								if (pedmap[peds[i]].handsup != 0)
 								{
-									if (!submerged)
+									if (PED::IS_PED_ON_MOUNT(peds[i]) && pedmap[peds[i]].dismount == 0)
 									{
-										ENTITY::SET_ENTITY_HEALTH(peds[i], ini_dyingmovementthreshold - 1, 0);
-										npchealth = ini_dyingmovementthreshold - 1;
-										PED::SET_PED_TO_RAGDOLL(peds[i], 2000, 2000, 0, false, false, false);
+										pedmap[peds[i]].dismount = GAMEPLAY::GET_GAME_TIMER() + ini_dismounthandsupdelta;
+										AI::CLEAR_PED_TASKS(peds[i], false, false);
+										AI::CLEAR_PED_SECONDARY_TASK(peds[i]);
+										AI::_xTASK_DISMOUNT_ANIMAL(peds[i], 0, 0, 0, 0, 0);
+										AUDIO::STOP_PED_SPEAKING(peds[i], true);
 									}
-									pedmap[peds[i]].tobedowned = 0;
-								}
-
-								if (!pedmap[peds[i]].ishanging && !AI::GET_IS_TASK_ACTIVE(peds[i], 11))
-								{
-									if (pedmap[peds[i]].handsup != 0)
+									else if (PED::IS_PED_IN_ANY_VEHICLE(peds[i], false) && pedmap[peds[i]].dismount == 0)
 									{
-										if (PED::IS_PED_ON_MOUNT(peds[i]) && pedmap[peds[i]].dismount == 0)
+										pedmap[peds[i]].dismount = GAMEPLAY::GET_GAME_TIMER() + ini_dismounthandsupdelta;
+										AI::CLEAR_PED_TASKS(peds[i], false, false);
+										AI::CLEAR_PED_SECONDARY_TASK(peds[i]);
+										AI::TASK_LEAVE_ANY_VEHICLE(peds[i], 0, 0);
+										AUDIO::STOP_PED_SPEAKING(peds[i], true);
+									}
+
+									if (pedmap[peds[i]].dismount != 0)
+									{
+										if (!PED::IS_PED_ON_MOUNT(peds[i]) && !PED::IS_PED_IN_ANY_VEHICLE(peds[i], false)) pedmap[peds[i]].dismount = 0;
+										else if (GAMEPLAY::GET_GAME_TIMER() > pedmap[peds[i]].dismount) pedmap[peds[i]].dismount = 0;
+									}
+									else
+									{
+										if (pedmap[peds[i]].handsup + ini_handsupdelta < GAMEPLAY::GET_GAME_TIMER() && pedmap[peds[i]].firsttimehandsup == 0)
 										{
-											pedmap[peds[i]].dismount = GAMEPLAY::GET_GAME_TIMER() + ini_dismounthandsupdelta;
-											AI::CLEAR_PED_TASKS(peds[i], false, false);
-											AI::CLEAR_PED_SECONDARY_TASK(peds[i]);
-											AI::_xTASK_DISMOUNT_ANIMAL(peds[i], 0, 0, 0, 0, 0);
-											AUDIO::STOP_PED_SPEAKING(peds[i], true);
+											pedmap[peds[i]].firsttimehandsup = GAMEPLAY::GET_GAME_TIMER();
 										}
-										else if (PED::IS_PED_IN_ANY_VEHICLE(peds[i], false) && pedmap[peds[i]].dismount == 0)
+
+										if (pedmap[peds[i]].firsttimehandsup != 0 && pedmap[peds[i]].firsttimehandsup + ini_handsuptime > GAMEPLAY::GET_GAME_TIMER())
 										{
-											pedmap[peds[i]].dismount = GAMEPLAY::GET_GAME_TIMER() + ini_dismounthandsupdelta;
-											AI::CLEAR_PED_TASKS(peds[i], false, false);
-											AI::CLEAR_PED_SECONDARY_TASK(peds[i]);
-											AI::TASK_LEAVE_ANY_VEHICLE(peds[i], 0, 0);
-											AUDIO::STOP_PED_SPEAKING(peds[i], true);
-										}
-
-										if (pedmap[peds[i]].dismount != 0)
-										{
-											if (!PED::IS_PED_ON_MOUNT(peds[i]) && !PED::IS_PED_IN_ANY_VEHICLE(peds[i], false)) pedmap[peds[i]].dismount = 0;
-											else if (GAMEPLAY::GET_GAME_TIMER() > pedmap[peds[i]].dismount) pedmap[peds[i]].dismount = 0;
-										}
-										else
-										{
-											if (pedmap[peds[i]].handsup + ini_handsupdelta < GAMEPLAY::GET_GAME_TIMER() && pedmap[peds[i]].firsttimehandsup == 0)
-											{
-												pedmap[peds[i]].firsttimehandsup = GAMEPLAY::GET_GAME_TIMER();
-											}
-
-											if (pedmap[peds[i]].firsttimehandsup != 0 && pedmap[peds[i]].firsttimehandsup + ini_handsuptime > GAMEPLAY::GET_GAME_TIMER())
-											{
-
-												Vector3 vecheadplayer = ENTITY::GET_WORLD_POSITION_OF_ENTITY_BONE(playerPed, PED::GET_PED_BONE_INDEX(peds[i], 21030));
-												float distance = GAMEPLAY::GET_DISTANCE_BETWEEN_COORDS(vecheadplayer.x, vecheadplayer.y, vecheadplayer.z, vechead.x, vechead.y, vechead.z, false);
-												if (distance < ini_handsupradius)
-												{
-													AI::CLEAR_PED_TASKS(peds[i], false, false);
-													AI::CLEAR_PED_SECONDARY_TASK(peds[i]);
-													AI::TASK_HANDS_UP(peds[i], ini_handsuptime, playerPed, 0, false);
-													AUDIO::STOP_PED_SPEAKING(peds[i], true);
-												}
-												else
-												{
-													AI::CLEAR_PED_TASKS(peds[i], false, false);
-													AI::CLEAR_PED_SECONDARY_TASK(peds[i]);
-													AI::xTASK_FLEE(peds[i], playerPed, 4, 0, -1.0f, -1, 0);
-												}
-											}
-
-											if (pedmap[peds[i]].handsup + ini_handsupdelta + ini_handsuptime < GAMEPLAY::GET_GAME_TIMER())
+											Vector3 vecheadplayer = ENTITY::GET_WORLD_POSITION_OF_ENTITY_BONE(playerPed, PED::GET_PED_BONE_INDEX(peds[i], 21030));
+											float distance = GAMEPLAY::GET_DISTANCE_BETWEEN_COORDS(vecheadplayer.x, vecheadplayer.y, vecheadplayer.z, vechead.x, vechead.y, vechead.z, false);
+											if (distance < ini_handsupradius)
 											{
 												AI::CLEAR_PED_TASKS(peds[i], false, false);
 												AI::CLEAR_PED_SECONDARY_TASK(peds[i]);
-												pedmap[peds[i]].handsup = 0;
-												pedmap[peds[i]].firsttimehandsup = 0;
+												AI::TASK_HANDS_UP(peds[i], ini_handsuptime, playerPed, 0, false);
+												AUDIO::STOP_PED_SPEAKING(peds[i], true);
 											}
+											else
+											{
+												AI::CLEAR_PED_TASKS(peds[i], false, false);
+												AI::CLEAR_PED_SECONDARY_TASK(peds[i]);
+												AI::xTASK_FLEE(peds[i], playerPed, 4, 0, -1.0f, -1, 0);
+											}
+										}
+
+										if (pedmap[peds[i]].handsup + ini_handsupdelta + ini_handsuptime < GAMEPLAY::GET_GAME_TIMER())
+										{
+											AI::CLEAR_PED_TASKS(peds[i], false, false);
+											AI::CLEAR_PED_SECONDARY_TASK(peds[i]);
+											pedmap[peds[i]].handsup = 0;
+											pedmap[peds[i]].firsttimehandsup = 0;
 										}
 									}
 								}
@@ -2076,32 +1459,11 @@ void main()
 							//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 							//
 							//
-							//			END: NPC FALLING CHECKS
+							//			END: NPC SURRENDERING, ID: PDO015x
 							//
 							//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
-							//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
-							//
-							//
-							//			BEGIN: HORSE FALLING DELTA, ID: PDO015
-							//
-							//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
-
-							//make sure falling off horses isn't lethal all the time
-							if (PED::IS_PED_ON_MOUNT(peds[i])) pedmap[peds[i]].lasttimeonmount = GAMEPLAY::GET_GAME_TIMER() + ini_horsefallingdelta;
-							if (pedmap[peds[i]].falltime != 0 && pedmap[peds[i]].lasttimeonmount > GAMEPLAY::GET_GAME_TIMER())
-							{
-								pedmap[peds[i]].falltime = 0;
-								pedmap[peds[i]].tobekilled = 0;
-							}
-
-							//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
-							//
-							//
-							//			END: HORSE FALLING DELTA
-							//
-							//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
-
+							
 							//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 							//
 							//
@@ -2283,7 +1645,7 @@ void main()
 							if (PED::GET_PED_LAST_DAMAGE_BONE(peds[i], &actBone) && pedmap[peds[i]].hasbeendamagedbyweapon)
 							{
 								//determining if NPC was hit in the torso
-								for (vector<int>::size_type it = 0; it != torsobonesbleeding.size(); it++)
+								for (std::vector<int>::size_type it = 0; it != torsobonesbleeding.size(); it++)
 								{
 									if (actBone == torsobonesbleeding[it])
 									{
@@ -2536,7 +1898,7 @@ void main()
 							//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
 							//put NPC down if hit in the legs enough
-							if (npchealth > ini_dyingmovementthreshold&& pedmap[peds[i]].status != 99
+							if (npchealth > ini_dyingmovementthreshold && pedmap[peds[i]].status != 99
 								&& pedmap[peds[i]].status != 10 && pedmap[peds[i]].status != 11 && ini_nopushingdown == 0)
 							{
 								if (isstanding)
@@ -2683,7 +2045,7 @@ void main()
 							{
 								Hash actweaphash;
 								WEAPON::GET_CURRENT_PED_WEAPON(playerPed, &actweaphash, false, 0, false);
-								for (vector<char*>::size_type it = 0; it != knives.size(); it++)
+								for (std::vector<char*>::size_type it = 0; it != knives.size(); it++)
 								{
 									if (actweaphash == GAMEPLAY::GET_HASH_KEY(knives[it]))
 									{
@@ -2832,7 +2194,7 @@ void main()
 								int act_Bone;
 								if (PED::GET_PED_LAST_DAMAGE_BONE(peds[i], &act_Bone))
 								{
-									for (vector<int>::size_type it = 0; it != legbones.size(); it++)
+									for (std::vector<int>::size_type it = 0; it != legbones.size(); it++)
 									{
 										if (act_Bone == legbones[it])
 										{
@@ -2861,7 +2223,7 @@ void main()
 										}
 									}
 
-									for (vector<int>::size_type it = 0; it != armbones.size(); it++)
+									for (std::vector<int>::size_type it = 0; it != armbones.size(); it++)
 									{
 										if (act_Bone == armbones[it])
 										{
@@ -2890,7 +2252,7 @@ void main()
 										}
 									}
 
-									for (vector<int>::size_type it = 0; it != torsobones.size(); it++)
+									for (std::vector<int>::size_type it = 0; it != torsobones.size(); it++)
 									{
 										if (act_Bone == torsobones[it])
 										{
@@ -2919,7 +2281,7 @@ void main()
 										}
 									}
 
-									for (vector<int>::size_type it = 0; it != headbones.size(); it++)
+									for (std::vector<int>::size_type it = 0; it != headbones.size(); it++)
 									{
 										if (act_Bone == headbones[it])
 										{
@@ -2948,7 +2310,7 @@ void main()
 										}
 									}
 
-									for (vector<int>::size_type it = 0; it != neckbones.size(); it++)
+									for (std::vector<int>::size_type it = 0; it != neckbones.size(); it++)
 									{
 										if (act_Bone == neckbones[it])
 										{
@@ -3319,7 +2681,7 @@ void main()
 															int painaudiorand = 0 + (std::rand() % (99999 - 0 + 1));
 															Hash actweaphash;
 															WEAPON::GET_CURRENT_PED_WEAPON(playerPed, &actweaphash, false, 0, false);
-															for (vector<char*>::size_type it = 0; it != knives.size(); it++)
+															for (std::vector<char*>::size_type it = 0; it != knives.size(); it++)
 															{
 																if (actweaphash == GAMEPLAY::GET_HASH_KEY(knives[it]))
 																{
@@ -3452,7 +2814,7 @@ void main()
 															int painaudiorand = 0 + (std::rand() % (99999 - 0 + 1));
 															Hash actweaphash;
 															WEAPON::GET_CURRENT_PED_WEAPON(playerPed, &actweaphash, false, 0, false);
-															for (vector<char*>::size_type it = 0; it != knives.size(); it++)
+															for (std::vector<char*>::size_type it = 0; it != knives.size(); it++)
 															{
 																if (actweaphash == GAMEPLAY::GET_HASH_KEY(knives[it]))
 																{
@@ -3581,6 +2943,13 @@ void main()
 										//
 										//______________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
+									}
+									else
+									{
+										if (ini_dropnpcindyingstate && npchealth <= ini_dyingthreshold)
+										{
+											PED::SET_PED_TO_RAGDOLL(peds[i], 35000, 35000, 0, false, false, false);
+										}
 									}
 								}
 
@@ -4086,7 +3455,18 @@ void main()
 			else DrawText(0.65, 0.65, "'Friendly Fire' has been DISABLED.");
 		}
 
-		WAIT(1);
+		WAIT(ini_tickinterval);
+		loopcounter++;
+
+		if (loopcounter % ini_clearnpcsaftertickinterval == 0)
+		{
+			for (auto& it : pedmap) {
+				if (!ENTITY::DOES_ENTITY_EXIST(it.first))
+				{
+					pedmap.erase(it.first);
+				}
+			}
+		}
 	}
 }
 
